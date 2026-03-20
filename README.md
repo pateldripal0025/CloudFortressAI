@@ -14,23 +14,52 @@ Experience the elite CloudFortress AI tactical command center live:
 
 ---
 
-## 🏗️ Project Architecture
+## 🏗️ Detailed Project Architecture
 
-CloudFortress AI is orchestrating a multi-service, elite cybersecurity ecosystem:
+CloudFortress AI operates as a high-fidelity, multi-layered security ecosystem. The architecture is designed for real-time tactical synchronization and neural-threat orchestration.
 
-```text
-.
-├── 🛰️ backend-express/     # Neural-Threat Engine (Node.js/Express)
-├── 📡 ai-engine/           # High-Fidelity Python AI Risk Models
-├── 🖥️ frontend/            # Mission Control Dashboard (React 18/Vite)
-├── 📦 docker/              # Deployment Orchestration & Containers
-├── 🛡️ scanners/            # Specialized Vulnerability Vector Probes
-├── 📜 docs/                # Tactical Documentation & Manuals
-├── 🏗️ infrastructure/      # Terraform & IaC Templates
-└── 🐳 docker-compose.yml   # Multi-service Synchronization
+### 🌐 System Overview (Mermaid)
+
+```mermaid
+graph TD
+    subgraph "Mission Control (Frontend)"
+        UI["React Dashboard (Vite)"]
+        CM["Command Map (Navigation)"]
+    end
+
+    subgraph "Neural-Threat Engine (Backend)"
+        API["Express API (Node.js)"]
+        WS["WebSocket Sync (Port 5001)"]
+        AUTH["JWT Neural Handshake"]
+    end
+
+    subgraph "Intelligence Layer"
+        AI["AI Risk Engine (Python)"]
+        VEC["Vulnerability Vector Scanners"]
+    end
+
+    subgraph "Persistence Layer"
+        DB[("MongoDB (Strategic Data)")]
+    end
+
+    UI <--> API
+    UI <--> WS
+    API <--> AUTH
+    API <--> AI
+    API <--> VEC
+    API <--> DB
+    VEC -->|Findings| DB
 ```
 
+### 🛰️ Core Ecosystem Breakdown
+
+1.  **🚀 Mission Control (Frontend)**: A React 18-powered interface using **Vite** for high-performance delivery. Features **Framer Motion** for tactical UI transitions and **Recharts** for high-fidelity security analytics.
+2.  **🧠 Neural-Threat Engine (Backend)**: An **Express.js** architecture orchestrating real-time telemetry via **Socket.io** on port 5001. Handles the **JWT Neural Handshake** for multi-tenant isolation.
+3.  **📡 Intelligence Layer**: Leveraging **Python-based AI models** to perform adaptive risk scoring and specialized **Vulnerability Vector Scanners** that probe cloud-native services (S3, IAM, KeyVault).
+4.  **💾 Strategic Persistence**: Managed via **MongoDB**, ensuring that tactical security findings and infrastructure metadata are stored with elite durability.
+
 ---
+
 
 ## 🚀 Strategic Visualization Modules
 
