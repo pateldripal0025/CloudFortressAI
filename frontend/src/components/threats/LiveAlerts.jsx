@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { ShieldAlert, AlertCircle } from 'lucide-react';
-
-const WS_URL = 'ws://localhost:8000/ws/alerts';
+import { io } from 'socket.io-client';
 
 const AlertToast = ({ t, alert }) => {
   const isCritical = alert.severity === 'Critical';
@@ -55,80 +54,37 @@ const AlertToast = ({ t, alert }) => {
   );
 };
 
-/**
- * LiveAlerts
- * - Connects to the backend WebSocket at /ws/alerts
- * - Shows a toast notification for every security alert received
- * - Calls onAlert(alert) so the parent can update the RiskTable
- */
 const LiveAlerts = ({ onAlert }) => {
-  const onAlertRef = useRef(onAlert);
-  useEffect(() => { onAlertRef.current = onAlert; }, [onAlert]);
-
   useEffect(() => {
-    let socket;
-    let retryTimeout;
+    const socket = io('http://localhost:5001', {
+      transports: ['websocket'],
+      upgrade: false
+    });
 
-    const connect = () => {
-      console.log(`[WS] Connecting to ${WS_URL}`);
-      socket = new WebSocket(WS_URL);
+    socket.on('connect', () => {
+      console.log('[WS] Connected to Express Socket.io server (Port 5001)');
+    });
 
-      socket.onopen = () => {
-        console.log('[WS] Connected — listening for security alerts');
-      };
 
-      socket.onmessage = (event) => {
-        try {
-          const alert = JSON.parse(event.data);
-          console.log('[WS] Alert received:', alert);
+    socket.on('scan_completed', (data) => {
+      console.log('[WS] Scan completed event received:', data);
+      // Removed telemetry toast popup for cleaner UI
+      if (onAlert) onAlert({ type: 'scan_completed', ...data });
+    });
 
-          // Show toast for Critical and High
-          if (alert.severity === 'Critical' || alert.severity === 'High') {
-            toast.custom(
-              (t) => <AlertToast t={t} alert={alert} />,
-              { duration: 6000, position: 'top-right' }
-            );
-          }
+    socket.on('new_notification', (notification) => {
+      // Removed real-time notification popup for cleaner UI
+      if (onAlert) onAlert({ type: 'notification', ...notification });
+    });
 
-          // Notify parent (e.g. to refresh RiskTable)
-          if (onAlertRef.current) onAlertRef.current(alert);
-        } catch (err) {
-          console.error('[WS] Failed to parse message:', err);
-        }
-      };
-
-      socket.onerror = () => {
-        console.warn('[WS] Connection error');
-      };
-
-      socket.onclose = () => {
-        console.log('[WS] Disconnected — retrying in 5 s');
-        retryTimeout = setTimeout(connect, 5000);
-      };
-    };
-
-    connect();
 
     return () => {
-      clearTimeout(retryTimeout);
-      if (socket) socket.close();
+      socket.disconnect();
     };
-  }, []);
+  }, [onAlert]);
 
-  return (
-    <Toaster
-      position="top-right"
-      reverseOrder={false}
-      gutter={8}
-      containerStyle={{
-        top: 40,
-        right: 40,
-      }}
-      toastOptions={{
-        style: { background: 'transparent', boxShadow: 'none', padding: 0 },
-      }}
-    />
-  );
+  return null;
 };
 
 export default LiveAlerts;
+

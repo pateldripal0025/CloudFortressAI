@@ -1,140 +1,102 @@
-import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import React from 'react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { motion } from 'framer-motion';
+import { Activity, ShieldAlert, Cpu } from 'lucide-react';
+import GlassCard from '../ui/GlassCard';
 
-const defaultData = [
-  { score: 0, value: 1 },
-  { score: 10, value: 3 },
-  { score: 20, value: 7 },
-  { score: 30, value: 15 },
-  { score: 40, value: 22 },
-  { score: 50, value: 30 },
-  { score: 60, value: 24 },
-  { score: 70, value: 18 },
-  { score: 80, value: 10 },
-  { score: 90, value: 5 },
-  { score: 100, value: 1 }
-];
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-slate-950/90 backdrop-blur-md border border-slate-700 p-3 rounded-lg shadow-2xl">
-        <p className="text-slate-400 font-medium text-xs mb-1">Risk Score: <span className="text-white">{label}</span></p>
-        <div className="flex items-center gap-2">
-           <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
-           <p className="text-cyan-400 font-bold tracking-wider">{payload[0].value} <span className="text-[10px] uppercase font-medium tracking-wide text-slate-400">Frequency</span></p>
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
-
-const CustomReferenceLabel = (props) => {
-  const { viewBox } = props;
-  const x = viewBox.x || 0;
-  
-  return (
-    <g>
-      <rect x={x - 45} y={10} width={90} height={24} fill="#ef4444" rx={4} />
-      <text x={x} y={26} fill="white" fontSize={10} fontWeight="bold" textAnchor="middle" className="tracking-widest">
-        THRESHOLD
-      </text>
-      <rect x={x - 30} y={38} width={60} height={16} fill="#b91c1c" rx={2} />
-      <text x={x} y={50} fill="white" fontSize={9} fontWeight="bold" textAnchor="middle" className="tracking-widest">
-        CRITICAL
-      </text>
-    </g>
-  );
-};
-
-const RiskDistributionCurve = () => {
-  const [threshold, setThreshold] = useState(70);
+const RiskDistributionCurve = ({ data }) => {
+  const chartData = data || [
+    { score: 0, count: 5 }, { score: 10, count: 12 }, { score: 20, count: 28 },
+    { score: 30, count: 45 }, { score: 40, count: 62 }, { score: 50, count: 85 },
+    { score: 60, count: 110 }, { score: 70, count: 145 }, { score: 80, count: 95 },
+    { score: 90, count: 65 }, { score: 100, count: 42 }
+  ];
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="w-full bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-xl p-6 relative overflow-hidden group"
-    >
-      {/* Decorative Glow */}
-      <div className="absolute top-0 right-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none" />
-
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 relative z-10 gap-4">
-        <div>
-          <h3 className="text-lg font-semibold text-cyan-400 uppercase tracking-widest">Risk Distribution Curve</h3>
-          <p className="text-slate-400 text-xs mt-1">Interactive threshold analysis active</p>
+    <GlassCard className="p-6 border-white/5 relative overflow-hidden group hover:border-rose-500/20 transition-all duration-700">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+      
+      <div className="relative z-10">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+               <Activity size={18} className="text-rose-500 animate-pulse" />
+               <h3 className="text-xl font-black text-white tracking-widest uppercase italic">Risk Profile <span className="text-rose-500">Vector</span></h3>
+            </div>
+            <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em] font-mono ml-8">Gaussian Distribution</p>
+          </div>
+          
+          <div className="flex gap-3">
+             <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-950/60 border border-white/5 rounded-xl font-mono text-[8px]">
+                <ShieldAlert size={10} className="text-rose-500" />
+                <span className="text-slate-400 uppercase tracking-widest">Peak: 72.4</span>
+             </div>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-4 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
-          <label htmlFor="threshold-slider" className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            Threshold:
-          </label>
-          <input
-            id="threshold-slider"
-            type="range"
-            min="0"
-            max="100"
-            step="10"
-            value={threshold}
-            onChange={(e) => setThreshold(Number(e.target.value))}
-            className="w-32 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
-          />
-          <span className="text-red-400 font-black w-8 text-right" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-             {threshold}
-          </span>
+
+        <div className="h-[240px] w-full bg-slate-950/40 rounded-[2rem] border border-white/5 p-6 relative shadow-inner backdrop-blur-sm group-hover:bg-slate-950/60 transition-colors">
+
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="riskGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.6} />
+                  <stop offset="50%" stopColor="#f59e0b" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.6} />
+                </linearGradient>
+                <linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="url(#riskGradient)" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="url(#riskGradient)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="0 15" vertical={true} stroke="rgba(255,255,255,0.03)" />
+              <XAxis 
+                dataKey="score" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fill: '#475569', fontSize: 10, fontStyle: 'italic', fontWeight: 900, fontFamily: 'monospace' }}
+                dy={20}
+              />
+              <YAxis hide />
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-slate-950/98 backdrop-blur-[40px] border border-white/10 p-8 rounded-[3rem] shadow-2xl ring-1 ring-white/10 min-w-[260px] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 font-mono text-6xl">0x{payload[0].payload.score}</div>
+                        <div className="flex items-center gap-3 mb-4 font-mono text-[9px] text-slate-500 tracking-[0.4em]">
+                           <Activity size={12} className="text-rose-500 animate-pulse" />
+                           ANALYTICS_PROBE
+                        </div>
+                        <div className="space-y-4 relative z-10">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Risk Coefficient</span>
+                            <span className="text-3xl font-black text-white tabular-nums tracking-tighter" style={{ fontFamily: 'Orbitron, sans-serif' }}>{payload[0].payload.score}</span>
+                          </div>
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Threats Isolated</span>
+                            <span className="text-2xl font-black text-rose-400 tabular-nums tracking-tighter" style={{ fontFamily: 'Orbitron, sans-serif' }}>{payload[0].value}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke="url(#riskGradient)"
+                strokeWidth={5}
+                fill="url(#riskFill)"
+                animationDuration={3000}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
-
-      <div className="w-full h-[350px] relative z-10">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={defaultData}
-            margin={{ top: 20, right: 30, left: -10, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" opacity={0.6} />
-            <XAxis 
-              dataKey="score" 
-              axisLine={{ stroke: '#334155' }}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-              dy={15}
-              label={{ value: 'Risk Score (0-100)', position: 'insideBottom', offset: -15, fill: '#64748b', fontSize: 11, fontWeight: 600, textAnchor: 'middle' }}
-            />
-            <YAxis 
-              axisLine={{ stroke: '#334155' }}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-              dx={-10}
-              label={{ value: 'Frequency', angle: -90, position: 'insideLeft', offset: 0, fill: '#64748b', fontSize: 11, fontWeight: 600, textAnchor: 'middle' }}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#475569', strokeWidth: 1, strokeDasharray: '4 4' }} />
-            
-            <ReferenceLine 
-                x={threshold} 
-                stroke="#ef4444" 
-                strokeDasharray="5 5" 
-                strokeWidth={2}
-                label={<CustomReferenceLabel />}
-                isFront={true}
-            />
-
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke="#22d3ee" 
-              strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6, fill: '#22d3ee', stroke: '#0a0f1c', strokeWidth: 3 }}
-              animationDuration={1500}
-              style={{ filter: 'drop-shadow(0 0 8px rgba(34,211,238,0.7))' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </motion.div>
+    </GlassCard>
   );
 };
 

@@ -3,60 +3,83 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Outfit', sans-serif;
+  --font-main: 'Outfit', sans-serif;
+  --bg-deep: 222 47% 7%;
+  --accent-cyan: 187 100% 50%;
+  --accent-blue: 214 100% 50%;
+  --glass-bg: 222 47% 11% / 0.45;
+  --border-white: 255 255 255 / 0.08;
 }
 
-body {
-  @apply bg-[#0b0f19] text-white overflow-x-hidden;
+@layer base {
+  body {
+    @apply bg-[#020617] text-slate-100 antialiased selection:bg-cyan-500/30 font-sans;
+    background-image: radial-gradient(circle at 50% 0%, rgba(6,182,212,0.08) 0%, transparent 70%);
+  }
+
+
 }
 
-.glass-card {
-  @apply bg-[#111827]/40 backdrop-blur-xl border border-white/5 rounded-3xl transition-all duration-500 shadow-2xl;
+@layer components {
+  .glass-card-premium {
+    @apply bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] 
+           shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-500 overflow-hidden;
+  }
+
+  .cyber-gradient-text {
+    @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent;
+  }
+
+  .premium-button-small {
+    @apply px-4 py-2 bg-slate-950 text-white font-black text-[9px] uppercase tracking-[0.2em]
+           rounded-xl border border-white/10 shadow-xl relative overflow-hidden
+           transition-all duration-300 hover:scale-[1.05] active:scale-95
+           hover:border-cyan-500/50 hover:shadow-cyan-500/20;
+  }
+
+  .premium-button::before, .premium-button-small::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none;
+    background: radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.06), transparent 40%);
+  }
+
+  .premium-button:hover::before, .premium-button-small:hover::before {
+    @apply opacity-100;
+  }
+
+
+  .cyber-glow {
+    @apply absolute inset-0 opacity-0 transition-opacity duration-700 pointer-events-none rounded-[2rem];
+    box-shadow: 0 0 40px 10px rgba(6,182,212,0.1);
+  }
+
+  .group:hover .cyber-glow {
+    @apply opacity-100;
+  }
+
+  .shimmer {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full 
+           before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r 
+           before:from-transparent before:via-white/5 before:to-transparent;
+  }
 }
 
-.glow-accent {
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
-}
-
-.neon-border {
-  @apply border border-[#00E5FF]/20 relative;
-}
-
-.neon-border::after {
-  content: "";
-  @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300;
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
-}
-
-.neon-border:hover::after {
-  @apply opacity-100;
-}
-
-.glass-morphism {
-  @apply bg-black/40 backdrop-blur-2xl border border-white/5;
-}
-
-.neo-gradient-border {
-  position: relative;
-  border-radius: 1rem;
-  background: linear-gradient(to right, #00f2fe 0%, #4facfe 100%);
-  padding: 1px;
-}
-
-.neo-gradient-content {
-  @apply bg-[#0a0a0a] rounded-[15px] h-full w-full;
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full;
+  @apply bg-slate-800 rounded-full border-2 border-transparent bg-clip-content;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-white/20;
+  @apply bg-slate-700;
 }

@@ -13,7 +13,9 @@ const AIPriorityInsights = ({ refreshTrigger }) => {
       try {
         setLoading(true);
         const res = await aiService.getPriorityInsights();
-        setInsights(res.data);
+        if (res.data && res.data.success) {
+          setInsights(res.data.data);
+        }
       } catch (err) {
         console.error('Failed to fetch AI insights:', err);
       } finally {

@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Outfit', 'sans-serif'],
+      },
       colors: {
         background: "0 0% 3.9%",
         foreground: "0 0% 98%",
@@ -30,7 +33,16 @@ export default {
         md: "calc(0.5rem - 2px)",
         sm: "calc(0.5rem - 4px)",
       },
+      keyframes: {
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
+      animation: {
+        shimmer: 'shimmer 2s infinite',
+      },
     },
   },
   plugins: ["tailwindcss-animate"],
 }
+

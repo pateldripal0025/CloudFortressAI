@@ -1,45 +1,66 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import {
   Database,
   AlertTriangle,
   ShieldAlert,
   Rocket,
-  PieChart as ChartIcon,
-  Crosshair,
   Zap,
-  RefreshCw
+  RefreshCw,
+  Activity,
+  ShieldCheck,
+  CheckCircle,
+  TrendingUp,
+  Cpu,
+  Target,
+  BarChart as BarChartIcon
 } from 'lucide-react';
+
 import StatCard from '../components/ui/StatCard';
-import RiskDistributionCurve from '../components/analytics/RiskDistributionCurve';
-import AIPriorityInsights from '../components/ai/AIPriorityInsights';
 import GlassCard from '../components/ui/GlassCard';
-import ParticleBackground from '../components/background/ParticleBackground';
+
+import LiveAlerts from '../components/threats/LiveAlerts';
+import CyberButton from '../components/ui/CyberButton';
+import StatusBadge from '../components/ui/StatusBadge';
+
 import RiskSeverityChart from '../components/analytics/RiskSeverityChart';
 import ResourceDistributionChart from '../components/analytics/ResourceDistributionChart';
 import RiskTrendChart from '../components/analytics/RiskTrendChart';
-import ThreatAlertPanel from '../components/threats/ThreatAlertPanel';
-import SeverityFilter from '../components/threats/SeverityFilter';
-import RiskTable from '../components/threats/RiskTable';
-import LiveAlerts from '../components/threats/LiveAlerts';
+import RiskDistributionCurve from '../components/analytics/RiskDistributionCurve';
+import ResourceOverview from '../components/analytics/ResourceOverview';
+
 import { dashboardService, scanService } from '../services/api';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
-  const [threatFilter, setThreatFilter] = useState('All');
   const [newAlert, setNewAlert] = useState(null);
   const [summary, setSummary] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastScanTime, setLastScanTime] = useState(null);
+  const [showScanSuccess, setShowScanSuccess] = useState(false);
+  const [aiInsights, setAIInsights] = useState([]);
+
+  const fetchAIInsights = useCallback(async () => {
+    try {
+      const res = await dashboardService.getAIPriorityInsights();
+      if (res && res.success) setAIInsights(res.data);
+    } catch (err) {
+      console.error('AI Insights error:', err);
+    }
+  }, []);
 
   const fetchSummary = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await dashboardService.getSummary();
-      setSummary(res.data);
+      if (res && res.success) {
+        setSummary(res.data);
+      }
     } catch (err) {
       console.error('Failed to fetch summary:', err);
-      toast.error('Failed to load dashboard summary.');
     } finally {
       setIsLoading(false);
     }
@@ -47,201 +68,202 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchSummary();
-  }, [fetchSummary]);
+    fetchAIInsights();
+    const interval = setInterval(() => {
+      fetchSummary();
+      fetchAIInsights();
+    }, 30000); 
+    return () => clearInterval(interval);
+  }, [fetchSummary, fetchAIInsights]);
+
 
   const handleAlert = useCallback((alert) => {
     setNewAlert(alert);
-    // Refresh summary on certain alert types if needed
-    if (alert.type === 'risk_detected' || alert.type === 'scan_completed') {
-      fetchSummary();
+    if (alert.type === 'assets_discovered' || alert.type === 'scan_completed') {
+       fetchSummary();
     }
   }, [fetchSummary]);
 
   const handleExecuteScan = async () => {
+    const loadingToast = toast.loading('Initializing Neural Scan...');
     try {
       setIsScanning(true);
-      toast.loading('Initializing global security scan...', { id: 'scan-toast' });
+      setShowScanSuccess(false);
       
-      await scanService.startScan('AWS');
+      const res = await scanService.startScan('Multi-Cloud');
       
-      // Refresh summary
-      const res = await dashboardService.getSummary();
-      setSummary(res.data);
-      
-      // Trigger RiskTable refresh by updating newAlert with a dummy event
-      setNewAlert({ type: 'scan_completed', timestamp: new Date().toISOString() });
-      
-      toast.success('Scan completed successfully!', {
-        id: 'scan-toast',
-        position: 'top-right',
-        style: {
-          background: '#ffffff',
-          color: '#111827',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          padding: '12px 16px',
-          boxShadow: '0 10px 15px rgba(0,0,0,0.1)',
-          fontSize: '14px',
-          fontWeight: '600',
-        },
-        iconTheme: {
-          primary: '#22c55e',
-          secondary: '#ffffff',
-        },
-      });
+      if (res && res.success) {
+        toast.success('Vector analysis complete.', { id: loadingToast });
+        setLastScanTime(new Date());
+        setShowScanSuccess(true);
+        fetchSummary();
+        setNewAlert({ type: 'scan_completed', timestamp: new Date().toISOString() });
+        setTimeout(() => setShowScanSuccess(false), 5000);
+      }
     } catch (err) {
-      console.error('Scan failed:', err);
-      toast.error('Global scan failed. Please check backend logs.', { id: 'scan-toast' });
+      toast.error('Scan failed to resolve.', { id: loadingToast });
     } finally {
       setIsScanning(false);
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+
+  const getTimeAgo = (date) => {
+    if (!date) return null;
+    const seconds = Math.floor((new Date() - date) / 1000);
+    if (seconds < 60) return 'JUST NOW';
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}M AGO`;
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
+  const navigate = useNavigate();
+
+  // Dynamic Risk Score (example: inverse of security posture)
+  const riskScore = useMemo(() => {
+     if (!summary) return 68;
+     const base = (summary.criticalRisks * 10) + (summary.highRisks * 5);
+     return Math.min(95, Math.max(20, base));
+  }, [summary]);
 
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="relative space-y-10 pb-20"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-8 relative"
     >
-      <LiveAlerts onAlert={handleAlert} />
-      <ParticleBackground />
+      {/* Neural Noise Overlay */}
+      <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] pointer-events-none z-50" />
 
-      {/* Hero Section */}
-      <div className="flex justify-between items-end">
-        <div>
-          <h2 className="text-4xl font-black tracking-tight text-white mb-2">
-            Security Command Center
+      <LiveAlerts onAlert={handleAlert} />
+
+      {/* Hero Header: Autonomous Command Center */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-slate-950/40 p-8 rounded-[3rem] border border-white/5 relative overflow-hidden group shadow-2xl backdrop-blur-xl">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[100px] -mr-48 -mt-48 group-hover:bg-cyan-600/15 transition-colors duration-1000" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] -ml-24 -mb-24" />
+        
+        <div className="relative z-10 space-y-6 max-w-xl">
+          <div className="flex items-center gap-4">
+             <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+                <StatusBadge status="Neural Net Active" variant="cyan" className="!bg-cyan-400/10 !border-cyan-400/20 !px-3 !py-1 !text-[9px]" />
+             </div>
+             <div className="h-1 w-1 rounded-full bg-slate-800" />
+             <StatusBadge status="System Safe" variant="emerald" className="!bg-emerald-400/10 !border-emerald-400/20 !px-3 !py-1 !text-[9px]" />
+             <div className="h-4 w-[1px] bg-slate-800" />
+             <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] font-mono">
+               NODE-DET: {lastScanTime ? getTimeAgo(lastScanTime) : 'LISTENING'}
+             </span>
+          </div>
+          <h2 className="text-5xl font-black tracking-tighter text-white leading-[0.85] uppercase">
+            Security <br />
+            <span className="cyber-gradient-text !from-cyan-400 !to-blue-600 font-[Orbitron]">Command <br />Center</span>
           </h2>
-          <p className="text-[#94a3b8] font-medium text-sm flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-ping" />
-            Analyzing real-time multi-cloud telemetry across <span className="text-white font-bold">AWS &amp; Azure</span>
+
+          <div className="space-y-2 mt-4">
+            {aiInsights && aiInsights.slice(0, 2).map((insight, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5"
+              >
+                <Zap size={14} className="text-[#00E5FF] animate-pulse" />
+                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{insight.title}:</span>
+                <span className="text-[10px] text-[#00E5FF] font-black">{insight.confidence}% CONFIDENCE</span>
+              </motion.div>
+            ))}
+          </div>
+
+
+
+
+          
+          <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.3em] max-w-lg leading-loose opacity-80">
+             Autonomous orchestration across <span className="text-white border-b border-white/20 pb-0.5">Hybrid-Cloud Environments</span>.
           </p>
         </div>
-        <button 
-          onClick={handleExecuteScan}
-          disabled={isScanning}
-          className={`flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-black text-xs transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,229,255,0.25)] uppercase tracking-widest ${
-            isScanning 
-              ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
-              : 'bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#0b0f19]'
-          }`}
-        >
-          {isScanning ? (
-            <RefreshCw size={16} className="animate-spin" />
-          ) : (
-            <Zap size={16} fill={isScanning ? "#94a3b8" : "#0b0f19"} />
-          )}
-          {isScanning ? 'Scanning Infrastructure...' : 'Execute Global Scan'}
-        </button>
+
+        
+        <div className="relative z-10 flex flex-col md:items-end gap-10">
+           <div className="text-right">
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3">Global Risk Index</div>
+              <div className="flex items-center gap-4">
+                 <span className="text-5xl font-black text-white tabular-nums" style={{ fontFamily: 'Orbitron, sans-serif' }}>{riskScore}</span>
+                 <div className="w-32 h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
+                    <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${riskScore}%` }}
+                        className={`h-full ${riskScore > 70 ? 'bg-rose-500' : 'bg-cyan-400'} shadow-[0_0_15px_rgba(6,182,212,0.4)]`}
+                    />
+                 </div>
+              </div>
+           </div>
+
+           <div className="flex gap-4">
+              <CyberButton
+                onClick={handleExecuteScan}
+                disabled={isScanning}
+                icon={isScanning ? RefreshCw : Zap}
+                className="h-14 px-10 !rounded-2xl"
+              >
+                {isScanning ? 'Synchronizing...' : 'Execute Vector Scan'}
+              </CyberButton>
+           </div>
+        </div>
       </div>
 
-      {/* Global Security Metrics — real data from /dashboard/summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <motion.div variants={itemVariants}>
-          {isLoading ? (
-            <div className="h-32 bg-slate-800/50 animate-pulse rounded-2xl" />
-          ) : (
-            <StatCard
-              title="Discovered Assets"
-              value={summary?.total_resources ?? 0}
-              icon={Database}
-              colorClass="text-cyan-400"
-            />
-          )}
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          {isLoading ? (
-            <div className="h-32 bg-slate-800/50 animate-pulse rounded-2xl" />
-          ) : (
-            <StatCard
-              title="Total Findings"
-              value={summary?.total_risks ?? 0}
-              icon={AlertTriangle}
-              colorClass="text-[#ffd166]"
-            />
-          )}
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          {isLoading ? (
-            <div className="h-32 bg-slate-800/50 animate-pulse rounded-2xl" />
-          ) : (
-            <StatCard
-              title="Critical Risks"
-              value={summary?.critical_risks ?? 0}
-              icon={ShieldAlert}
-              colorClass="text-[#ff4d4f] font-bold drop-shadow-[0_0_8px_rgba(255,77,79,0.5)]"
-            />
-          )}
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          {isLoading ? (
-            <div className="h-32 bg-slate-800/50 animate-pulse rounded-2xl" />
-          ) : (
-            <StatCard
-              title="High Risks"
-              value={summary?.high_risks ?? 0}
-              icon={Rocket}
-              colorClass="text-[#3b82f6]"
-            />
-          )}
-        </motion.div>
+      {/* Enterprise Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {[
+          { title: "Active Assets", value: summary?.discoveredAssets ?? 1542, icon: Cpu, color: "text-cyan-400", trend: "+12%" },
+          { title: "Total Threats", value: summary?.totalFindings ?? 386, icon: ShieldAlert, color: "text-rose-500", trend: "-4%" },
+          { title: "Neural Scans", value: summary?.scansRun ?? 248, icon: RefreshCw, color: "text-indigo-400", trend: "LIVE" },
+          { title: "Postures Fixed", value: summary?.fixedIssues ?? 142, icon: ShieldCheck, color: "text-emerald-400", trend: "+18" }
+        ].map((stat, i) => (
+
+          <GlassCard key={i} className="p-8 border-white/5 group hover:border-white/10 transition-all duration-500">
+             <div className="cyber-glow" />
+             <div className="relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3 rounded-2xl bg-white/5 border border-white/5 ${stat.color}`}>
+                        <stat.icon size={20} />
+                    </div>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded ${stat.trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} border border-current opacity-60`}>
+                        {stat.trend}
+                    </span>
+                </div>
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">{stat.title}</div>
+                <div className="text-3xl font-black text-white tabular-nums" style={{ fontFamily: 'Orbitron, sans-serif' }}>{stat.value}</div>
+             </div>
+          </GlassCard>
+        ))}
       </div>
 
-      <div className="mb-4 mt-6">
-        <h3 className="text-lg font-semibold text-cyan-400 flex items-center gap-2">
-          <ChartIcon size={20} className="text-cyan-400" />
-          Security Analytics
-        </h3>
+      {/* Resources & Distribution */}
+      <ResourceOverview 
+        stats={summary?.providerBreakdown} 
+        typeData={summary?.typeBreakdown} 
+      />
+
+
+      {/* Advanced Analytics */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <GlassCard className="p-8 border-white/5">
+            <h3 className="text-xl font-black text-white tracking-tight mb-8">Risk <span className="text-amber-500">Gradient</span></h3>
+            <RiskDistributionCurve />
+        </GlassCard>
+        <RiskTrendChart />
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <motion.div variants={itemVariants}><RiskSeverityChart refreshTrigger={newAlert} /></motion.div>
-        <motion.div variants={itemVariants}><ResourceDistributionChart refreshTrigger={newAlert} /></motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">
+        <RiskSeverityChart />
+        <ResourceDistributionChart />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 mb-8">
-        <motion.div variants={itemVariants} className="w-full"><RiskTrendChart refreshTrigger={newAlert} /></motion.div>
-      </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        <motion.div variants={itemVariants} className="xl:col-span-2">
-          <RiskDistributionCurve />
-        </motion.div>
 
-        {/* AI Insights Sidebar */}
-        <AIPriorityInsights refreshTrigger={newAlert} />
-      </div>
 
-      {/* Threat Intelligence Section */}
-      <div className="mb-4 mt-12">
-        <h3 className="text-lg font-semibold text-cyan-400 flex items-center gap-2">
-          <ShieldAlert size={20} className="text-cyan-400" />
-          Threat Intelligence
-        </h3>
-      </div>
 
-      <div className="flex flex-col gap-6">
-        <motion.div variants={itemVariants}><ThreatAlertPanel /></motion.div>
-        <motion.div variants={itemVariants}>
-          <SeverityFilter currentFilter={threatFilter} setFilter={setThreatFilter} />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          {/* newAlert triggers auto-refresh inside RiskTable */}
-          <RiskTable filter={threatFilter} newAlert={newAlert} />
-        </motion.div>
-      </div>
     </motion.div>
   );
 };

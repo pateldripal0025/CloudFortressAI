@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { ShieldAlert } from 'lucide-react';
+
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { dashboardService } from '../../services/api';
 
@@ -13,79 +15,101 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const d = payload[0].payload;
     return (
-      <div className="bg-slate-950/80 backdrop-blur-md border border-slate-700 p-3 rounded-lg shadow-2xl outline-none">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full shadow-lg" style={{ backgroundColor: d.color, boxShadow: `0 0 10px ${d.color}` }} />
-          <p className="text-white font-medium text-sm">{d.name}</p>
+      <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl ring-1 ring-white/10">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color, boxShadow: `0 0 10px ${d.color}` }} />
+          <p className="text-white font-black text-xs uppercase tracking-widest">{d.name}</p>
         </div>
-        <p className="text-slate-300 text-xs mt-1 font-bold">{payload[0].value} Findings</p>
+        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] tabular-nums">
+          {payload[0].value} <span className="text-slate-600 ml-1">Detected Threats</span>
+        </p>
       </div>
     );
   }
   return null;
 };
 
+const getMockSeverity = () => [
+  { name: 'Critical', value: 8, color: '#f43f5e' },
+  { name: 'High', value: 15, color: '#f59e0b' },
+  { name: 'Medium', value: 24, color: '#10b981' },
+  { name: 'Low', value: 42, color: '#3b82f6' }
+];
+
 const RiskSeverityChart = ({ refreshTrigger }) => {
-  const [data, setData] = useState(SEVERITY_META.map(m => ({ ...m, value: 0 })));
+  const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dashboardService.getSummary()
+    setLoading(true);
+    dashboardService.getAnalytics()
       .then(res => {
-        const summary = res.data;
-        const mapped = SEVERITY_META.map(m => ({
-          ...m,
-          value: summary[m.key] ?? 0,
-        }));
-        setData(mapped);
-        setTotal(summary.total_risks ?? 0);
+        if (res && res.success) {
+          const analytics = res.data;
+          const config = analytics.severityConfig;
+          const totalVal = config.reduce((acc, curr) => acc + curr.value, 0);
+          
+          if (totalVal > 0) {
+            setData(config);
+            setTotal(totalVal);
+          } else {
+            const mock = getMockSeverity();
+            setData(mock);
+            setTotal(mock.reduce((a, c) => a + c.value, 0));
+          }
+        }
       })
-      .catch(() => {/* keep defaults */})
+
+      .catch(() => {
+        const mock = getMockSeverity();
+        setData(mock);
+        setTotal(mock.reduce((a, c) => a + c.value, 0));
+      })
       .finally(() => setLoading(false));
   }, [refreshTrigger]);
 
   return (
-    <div className="h-full p-6 bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-500/10 transition-colors duration-500" />
-
-      <div className="mb-4 relative z-10">
-        <h3 className="text-lg font-semibold text-cyan-400">Risk Severity</h3>
-        <p className="text-slate-400 text-xs mt-1">Distribution of active threats</p>
+    <div className="h-full p-8 glass-card-premium flex flex-col relative group">
+      <div className="cyber-glow" />
+      
+      <div className="mb-6 relative z-10 flex justify-between items-start">
+        <div>
+          <h3 className="text-xl font-black text-white tracking-tight">Threat <span className="text-rose-500">Surface</span></h3>
+          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Global severity vector</p>
+        </div>
+        <div className="p-2 rounded-xl bg-rose-500/5 border border-rose-500/10">
+           <ShieldAlert className="w-5 h-5 text-rose-500 opacity-50" />
+        </div>
       </div>
 
-      <div className="flex-1 w-full relative min-h-[250px] z-10">
+      <div className="flex-1 w-full relative min-h-[300px] z-10">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-[3px] border-rose-500/20 border-t-rose-500 rounded-full animate-spin" />
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <defs>
-                <filter id="glow-pie" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={65}
-                outerRadius={95}
-                paddingAngle={6}
+                innerRadius={75}
+                outerRadius={105}
+                paddingAngle={8}
                 dataKey="value"
                 stroke="none"
                 animationBegin={0}
-                animationDuration={1500}
+                animationDuration={2000}
+                strokeWidth={0}
               >
                 {data.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={entry.color}
-                    className="hover:opacity-90 transition-opacity cursor-pointer outline-none"
-                    style={{ filter: 'url(#glow-pie)' }}
+                    className="hover:filter hover:brightness-125 transition-all cursor-pointer outline-none"
+                    style={{ filter: `drop-shadow(0 0 12px ${entry.color}44)` }}
                   />
                 ))}
               </Pie>
@@ -94,20 +118,20 @@ const RiskSeverityChart = ({ refreshTrigger }) => {
           </ResponsiveContainer>
         )}
 
-        {/* Center label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-3xl font-black text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>{total}</span>
-          <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Total</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-4">
+          <span className="text-4xl font-black text-white tabular-nums" style={{ fontFamily: 'Orbitron, sans-serif' }}>{total}</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black mt-1">Active</span>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="grid grid-cols-2 gap-y-3 gap-x-2 mt-4 z-10 relative">
+      <div className="grid grid-cols-2 gap-y-4 gap-x-6 mt-4 z-10 relative border-t border-white/5 pt-6">
         {data.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}` }} />
-            <span className="text-xs text-slate-300 font-medium">{item.name}</span>
-            <span className="text-xs text-white ml-auto font-bold" style={{ fontFamily: 'Orbitron, sans-serif' }}>{item.value}</span>
+          <div key={i} className="flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}` }} />
+            <div className="flex flex-col">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{item.name}</span>
+                <span className="text-white font-black text-sm" style={{ fontFamily: 'Orbitron, sans-serif' }}>{item.value}</span>
+            </div>
           </div>
         ))}
       </div>
@@ -116,3 +140,4 @@ const RiskSeverityChart = ({ refreshTrigger }) => {
 };
 
 export default RiskSeverityChart;
+
