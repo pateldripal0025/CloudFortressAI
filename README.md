@@ -4,6 +4,16 @@ CloudFortress AI is a next-generation, enterprise-grade cybersecurity SaaS platf
 
 ---
 
+## ✨ Live Experience
+
+Experience the elite CloudFortress AI tactical command center live:
+[🔗 Access Live Mission Control](https://cloudfortress-ai.vercel.app)
+
+> [!NOTE]
+> If the live link is undergoing recalibration, follow the **Tactical Deployment** steps to synchronize the environment locally.
+
+---
+
 ## 🚀 Strategic Visualization Modules
 
 CloudFortress AI transcends traditional risk lists with advanced tactical dashboards:
