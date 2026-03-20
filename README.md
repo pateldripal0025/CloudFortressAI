@@ -14,7 +14,26 @@ Experience the elite CloudFortress AI tactical command center live:
 
 ---
 
+## 🏗️ Project Architecture
+
+CloudFortress AI is orchestrating a multi-service, elite cybersecurity ecosystem:
+
+```text
+.
+├── 🛰️ backend-express/     # Neural-Threat Engine (Node.js/Express)
+├── 📡 ai-engine/           # High-Fidelity Python AI Risk Models
+├── 🖥️ frontend/            # Mission Control Dashboard (React 18/Vite)
+├── 📦 docker/              # Deployment Orchestration & Containers
+├── 🛡️ scanners/            # Specialized Vulnerability Vector Probes
+├── 📜 docs/                # Tactical Documentation & Manuals
+├── 🏗️ infrastructure/      # Terraform & IaC Templates
+└── 🐳 docker-compose.yml   # Multi-service Synchronization
+```
+
+---
+
 ## 🚀 Strategic Visualization Modules
+
 
 CloudFortress AI transcends traditional risk lists with advanced tactical dashboards:
 
