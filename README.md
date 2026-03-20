@@ -1,76 +1,67 @@
-# 🛡️ CloudFortress AI: Advanced Cloud Security & Vulnerability Analysis
+# 🛡️ CloudFortress AI: Elite Cloud Security Command Center
 
-CloudFortress AI is an enterprise-grade cloud security platform that provides automated, AI-driven vulnerability scanning and real-time risk assessment. It helps DevOps teams secure their multi-cloud environments by identifying misconfigurations and prioritizing critical security gaps.
-
----
-
-## 🚀 Key Features
-
-- **Automated Scanning**: Continuous detection of cloud vulnerabilities and misconfigurations.
-- **AI-Powered Insights**: Uses advanced risk models to prioritize security threats.
-- **Interactive Dashboard**: Sleek and intuitive UI for visualizing security posture.
-- **Multicloud Support**: Seamless integration with AWS, Azure, and Google Cloud.
-- **Detailed Reporting**: Generate comprehensive security audits in PDF/JSON formats.
+CloudFortress AI is a next-generation, enterprise-grade cybersecurity SaaS platform. It delivers automated, AI-driven tactical oversight and real-time vulnerability analysis for mission-critical cloud environments. By leveraging high-fidelity visualization and neural-handshake telemetry, CloudFortress AI empowers security operators with superior tactical intelligence across AWS, Azure, and GCP.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Strategic Visualization Modules
 
-- **Frontend**: React.js, Vite, TailwindCSS, Shadcn/UI
-- **Backend**: Python (FastAPI), Pydantic, SQLAlchemy
-- **Database**: PostgreSQL, Redis
-- **AI Engine**: TensorFlow, Scikit-learn
-- **DevOps**: Docker, Docker Compose, GitHub Actions
+CloudFortress AI transcends traditional risk lists with advanced tactical dashboards:
 
----
-
-## 🏗️ Installation Steps
-
-To set up CloudFortress AI locally, follow these steps:
-
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/cloudfortress-ai.git
-   cd cloudfortress-ai
-   ```
-
-2. **Environment Configuration**:
-   Create a `.env` file in the root directory and add your unique API keys.
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Deploy with Docker**:
-   ```bash
-   docker-compose up --build -d
-   ```
-
-4. **Initialize the Database**:
-   ```bash
-   docker exec -it backend-service alembic upgrade head
-   ```
+- **🌐 Threat Surface Explorer**: A high-fidelity mapping of your global attack vectors, featuring real-time Exposure Indices and neural hazard heatmaps.
+- **💠 Resource Sphere (Nexus)**: An interactive, force-directed asset graph providing 360° visibility into infrastructure connectivity and criticality.
+- **🛰️ Neural-Threat Engine**: Real-time telemetry synchronization on port 5001, providing live alert feeds and adaptive risk scoring.
 
 ---
 
-## 📖 Usage Instructions
+## 🛠️ Elite Tech Stack
 
-- **Dashboard**: Use the interface at `http://localhost:3000` to manage scans.
-- **Security Audit**: Start a scan via the "New Assessment" button.
-- **API Access**: Explore the interactive documentation at `http://localhost:8000/docs`.
-
----
-
-## ✨ Live Demo
-
-Experience CloudFortress AI live in our sandbox environment:  
-[🔗 View Live Demo](https://your-live-website-link.com)
+- **Frontend**: React 18, Vite, Framer Motion (Tactical UI), Recharts (Fidelity Analytics), TailwindCSS (Enterprise Design System).
+- **Backend**: Node.js, Express, Socket.io (Neural Sync), Mongoose.
+- **Database**: MongoDB (Strategic Data Persistence).
+- **Security**: JWT-based Neural Handshake, Multi-tenant Isolation, AES-grade Password Hashing.
 
 ---
 
-## 🤝 Contributing
+## 🏗️ Tactical Deployment
 
-We welcome contributions! Please fork the repository and submit a Pull Request.
+To synchronize and deploy CloudFortress AI locally:
 
-## 📄 License
+### 1. Repository Initializer
+```bash
+git clone https://github.com/pateldripal0025/CloudFortressAI.git
+cd CloudFortressAI
+```
 
-This project is licensed under the MIT License.
+### 2. Neural-Threat Engine Setup (Backend)
+```bash
+cd backend-express
+npm install
+# Configure .env with MONGODB_URI and JWT_SECRET
+node server.js
+```
+
+### 3. Mission-Control Interface (Frontend)
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+---
+
+## 📖 Operational Usage
+
+- **Command Center**: Access the primary dashboard at `http://localhost:5173/dashboard`.
+- **Vector Scans**: Execute deep-infrastructure scans via the 'Execute Vector Scan' command.
+- **Tactical Handover**: All configurations are synchronized via the `api.js` tactical service.
+
+---
+
+## 🤝 Tactical Contributions
+
+We welcome elite insights and tactical contributions. Please fork the repository and submit a Pull Request.
+
+## 📄 Mission License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
