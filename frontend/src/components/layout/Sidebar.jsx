@@ -9,8 +9,10 @@ import {
   ShieldCheck,
   X,
   Globe,
-  Component
+  Component,
+  Map
 } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../context/AppContext';
 
@@ -90,7 +92,11 @@ const Sidebar = () => {
             <SidebarItem to="/scans" icon={Zap} label="Scans" onClick={closeSidebar} />
             <SidebarItem to="/compliance" icon={FileCheck} label="Compliance" onClick={closeSidebar} />
             <SidebarItem to="/settings" icon={Settings} label="Settings" onClick={closeSidebar} />
+            <div className="pt-4 mt-4 border-t border-white/5">
+              <SidebarItem to="/sitemap" icon={Map} label="Command Map" onClick={closeSidebar} />
+            </div>
           </nav>
+
 
           <footer className="mt-auto pt-8 border-t border-white/5">
             <div className="p-4 bg-slate-900/50 rounded-2xl border border-white/5 flex items-center gap-4">

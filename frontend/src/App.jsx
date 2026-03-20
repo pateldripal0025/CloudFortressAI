@@ -9,6 +9,8 @@ import Reports from './pages/Reports';
 import RiskPage from './pages/RiskPage';
 import ThreatSurface from './pages/ThreatSurface';
 import ResourceSphere from './pages/ResourceSphere';
+import Sitemap from './pages/Sitemap';
+
 
 const NotFound = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -81,7 +83,9 @@ function App() {
                 <Route path="compliance" element={<Compliance />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="reports" element={<Reports />} />
+                <Route path="sitemap" element={<Sitemap />} />
                 <Route path="risk" element={<RiskPage />} />
+
               </Route>
             </Route>
 
