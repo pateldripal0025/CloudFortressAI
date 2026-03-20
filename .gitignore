@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+dist/
+build/
+*.log
+*.mjs.map
+vite.config.js.timestamp-*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+ENV/
+env/
+.env
+.env.local
+.env.*.local
+
+# Docker logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

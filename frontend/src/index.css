@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  @apply bg-[#0b0f19] text-white overflow-x-hidden;
+}
+
+.glass-card {
+  @apply bg-[#111827]/40 backdrop-blur-xl border border-white/5 rounded-3xl transition-all duration-500 shadow-2xl;
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+.neon-border {
+  @apply border border-[#00E5FF]/20 relative;
+}
+
+.neon-border::after {
+  content: "";
+  @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+.neon-border:hover::after {
+  @apply opacity-100;
+}
+
+.glass-morphism {
+  @apply bg-black/40 backdrop-blur-2xl border border-white/5;
+}
+
+.neo-gradient-border {
+  position: relative;
+  border-radius: 1rem;
+  background: linear-gradient(to right, #00f2fe 0%, #4facfe 100%);
+  padding: 1px;
+}
+
+.neo-gradient-content {
+  @apply bg-[#0a0a0a] rounded-[15px] h-full w-full;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/20;
+}
