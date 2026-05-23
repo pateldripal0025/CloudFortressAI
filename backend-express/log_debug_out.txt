@@ -1,0 +1,62 @@
+﻿[dotenv@17.3.1] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+CloudFortress AI Engine running on port 5001
+MongoDB Connected: 127.0.0.1
+[SIMULATION] Orchestrating background discovery for 6 tenants...
+[Backend] Registration Request Received: {
+  name: 'Test User',
+  email: 'test@user.com',
+  password: 'password',
+  organization: 'ai  recruiters'
+}
+[Backend] User Created Successfully: test@user.com
+[RISK SEED] Initializing Advanced Telemetry Matrix for tenant: 69e47db2c2bcf56886692b49
+node : [VULN SCAN 
+GENERATION ERROR] 
+TypeError: Cannot read 
+properties of undefined 
+(reading 'resource')
+At line:1 char:1
++ node server.js > 
+out.log 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo        
+      : NotSpecified    : 
+([VULN SCAN GENE.    
+..ing 'resource'):S    
+tring) [], RemoteEx    
+ception
+    + FullyQualifiedErr   
+ orId : NativeComman    
+dError
+ 
+    at exports.generateSca
+nVulnerabilities (E:\infod
+esk\CloudFortress AI\backe
+nd-express\controllers\vul
+nerabilityController.js:10
+3:24)
+    at Timeout._onTimeout 
+(E:\infodesk\CloudFortress
+ AI\backend-express\contro
+llers\scanController.js:39
+:32)
+    at process.processTick
+sAndRejections (node:inter
+nal/process/task_queues:10
+3:5)
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...
+[SIMULATION] Orchestrating background discovery for 7 tenants...

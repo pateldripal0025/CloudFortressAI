@@ -4,6 +4,15 @@ const Risk = require('./models/Risk');
 const Resource = require('./models/Resource');
 const Scan = require('./models/Scan');
 const Vulnerability = require('./models/Vulnerability');
+const User = require('./models/User');
+
+// Test user that will be created
+const testUser = {
+  name: "Test User",
+  email: "test@cloudfortress.ai",
+  password: "TestPassword123",
+  organization: "CloudFortress"
+};
 
 const sampleRisks = [
   {
@@ -48,7 +57,11 @@ const sampleResources = [
   { name: "finance-prod-db", type: "RDS Instance", provider: "AWS", environment: "production" },
   { name: "storage-account-alpha", type: "Storage Account", provider: "Azure", environment: "production" },
   { name: "web-server-v1", type: "Virtual Machine", provider: "AWS", environment: "staging" },
-  { name: "auth-gateway", type: "API Gateway", provider: "AWS", environment: "development" }
+  { name: "auth-gateway", type: "API Gateway", provider: "AWS", environment: "development" },
+  { name: "lambda-processor", type: "Lambda Function", provider: "AWS", environment: "production" },
+  { name: "k8s-cluster-prod", type: "K8s Cluster", provider: "AWS", environment: "production" },
+  { name: "blob-storage-dev", type: "Blob Storage", provider: "Azure", environment: "development" },
+  { name: "gcp-compute-1", type: "Compute Engine", provider: "GCP", environment: "production" }
 ];
 
 const sampleScans = [
@@ -78,9 +91,28 @@ const seedDB = async () => {
     await Scan.deleteMany({});
     await Vulnerability.deleteMany({});
     
-    // Insert new data
-    await Risk.insertMany(sampleRisks);
-    await Resource.insertMany(sampleResources);
+    // Create or get test user
+    let user = await User.findOne({ email: testUser.email });
+    if (!user) {
+      user = await User.create(testUser);
+      console.log("[Seed] Test user created:", user.email);
+    } else {
+      console.log("[Seed] Test user already exists:", user.email);
+    }
+    
+    const tenantId = user._id;
+    
+    // Add tenantId to resources and insert
+    const resourcesWithTenant = sampleResources.map(r => ({ ...r, tenantId }));
+    await Resource.insertMany(resourcesWithTenant);
+    console.log(`[Seed] Inserted ${resourcesWithTenant.length} resources`);
+    
+    // Add tenantId to risks and insert
+    const risksWithTenant = sampleRisks.map(r => ({ ...r, tenantId }));
+    await Risk.insertMany(risksWithTenant);
+    console.log(`[Seed] Inserted ${risksWithTenant.length} risks`);
+    
+    // Insert scans and vulnerabilities
     await Scan.insertMany(sampleScans);
     await Vulnerability.insertMany(sampleVulnerabilities);
     

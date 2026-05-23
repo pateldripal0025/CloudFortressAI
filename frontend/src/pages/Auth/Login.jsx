@@ -20,7 +20,10 @@ const Login = () => {
       toast.success('Access Granted. Welcome to CloudFortress AI');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Authentication failed');
+      toast.error(err.message || 'Authentication failed');
+      if (err.message && err.message.toLowerCase().includes('verify')) {
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -71,7 +74,7 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between ml-1">
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Password</label>
-                <button type="button" className="text-[10px] font-bold text-[#00E5FF] uppercase tracking-widest hover:text-[#00E5FF]/80 transition-colors">Forgot?</button>
+                <Link to="/forgot-password" className="text-[10px] font-bold text-[#00E5FF] uppercase tracking-widest hover:text-[#00E5FF]/80 transition-colors">Forgot?</Link>
               </div>
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00E5FF] transition-colors">

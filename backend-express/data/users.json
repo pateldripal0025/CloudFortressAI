@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "e038h5m5f",
+    "name": "Test User",
+    "email": "test@user.com",
+    "password": "$2b$12$rAovRIAKJybhL33PBlp3gOPiHJLkSZPyykumLnXB2/cyohta4x03.",
+    "role": "admin",
+    "organization": "CloudFortress",
+    "createdAt": "2026-05-18T10:54:51.016Z"
+  },
+  {
+    "_id": "rhdic8mbz",
+    "name": "patel dripal",
+    "email": "test@user",
+    "password": "$2b$12$4rBrvWFoY8vzO7YST4tUgOKacBeHW9UYDGZtAifByjkJGddP8OI7.",
+    "role": "analyst",
+    "organization": "AWS",
+    "createdAt": "2026-05-18T10:55:19.574Z"
+  },
+  {
+    "_id": "xxwwhloo0",
+    "name": "PATEL DRIPAL JITENDRABHAI",
+    "email": "dripalpatel@gmail.com",
+    "password": "$2b$12$CdhzqfMO5ODww4u7tKe7cOvL0bFSFrQIHjmgMvql0KxjqiobowJkO",
+    "role": "analyst",
+    "organization": "PARUL UNIVERSITY",
+    "createdAt": "2026-05-19T11:07:53.443Z"
+  },
+  {
+    "_id": "ig9z8kmhd",
+    "name": "dripal",
+    "email": "dripalpatel2@gmail.com",
+    "password": "$2b$12$sIKa34wygsOPSPpUpf6Deeb8bXobTfJC3zyMdl25gF9TeeF8KxjsS",
+    "role": "analyst",
+    "organization": "AWS",
+    "createdAt": "2026-05-23T14:04:33.829Z"
+  }
+]

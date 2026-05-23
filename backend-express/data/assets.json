@@ -1,0 +1,335 @@
+[
+  {
+    "_id": "gpyd8zrss",
+    "createdAt": "2026-05-23T14:04:40.090Z",
+    "name": "s3-finance-tax-records-prod",
+    "type": "S3 Bucket",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "2i60mct76",
+    "createdAt": "2026-05-23T14:04:40.091Z",
+    "name": "ec2-web-portal-front-01",
+    "type": "Virtual Machine",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "8ldtazuxu",
+    "createdAt": "2026-05-23T14:04:40.092Z",
+    "name": "rds-customer-db-prod-master",
+    "type": "SQL Database",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "k27y0ml6o",
+    "createdAt": "2026-05-23T14:04:40.093Z",
+    "name": "k8s-cluster-alpha-02",
+    "type": "K8s Cluster",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "vvq6xgc0h",
+    "createdAt": "2026-05-23T14:04:40.093Z",
+    "name": "ebs-billing-app-node-03",
+    "type": "Blob Storage",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "g2rxrguga",
+    "createdAt": "2026-05-23T14:05:00.816Z",
+    "name": "sql-2vwmz6-azure",
+    "type": "SQL Database",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "bih35hqfc",
+    "createdAt": "2026-05-23T14:05:00.817Z",
+    "name": "virtual-rlt6t-aws",
+    "type": "Virtual Machine",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "crire18mg",
+    "createdAt": "2026-05-23T14:05:00.818Z",
+    "name": "sql-1n38bj-azure",
+    "type": "SQL Database",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "3yotnebsp",
+    "createdAt": "2026-05-23T14:05:00.818Z",
+    "name": "s3-9x9op-gcp",
+    "type": "S3 Bucket",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "jd1mlw8gl",
+    "createdAt": "2026-05-23T14:05:00.819Z",
+    "name": "s3-t7kuvk-aws",
+    "type": "S3 Bucket",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "id0y24bpl",
+    "createdAt": "2026-05-23T14:05:00.821Z",
+    "name": "s3-p0nv8h-azure",
+    "type": "S3 Bucket",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "x8rtt35mc",
+    "createdAt": "2026-05-23T14:05:02.069Z",
+    "name": "iam-k37nxj-gcp",
+    "type": "IAM Role",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "jj20o4ocz",
+    "createdAt": "2026-05-23T14:05:02.069Z",
+    "name": "lambda-xtc9xp-gcp",
+    "type": "Lambda Function",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "5hvri1vck",
+    "createdAt": "2026-05-23T14:05:02.070Z",
+    "name": "iam-fm46tm-azure",
+    "type": "IAM Role",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "9rc8y1m55",
+    "createdAt": "2026-05-23T14:05:02.072Z",
+    "name": "iam-jzcjvp-aws",
+    "type": "IAM Role",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "rs99fokyo",
+    "createdAt": "2026-05-23T14:05:02.072Z",
+    "name": "blob-3br9nl-aws",
+    "type": "Blob Storage",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "2gotjxeyo",
+    "createdAt": "2026-05-23T14:05:02.073Z",
+    "name": "virtual-o673yr-aws",
+    "type": "Virtual Machine",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "nre4k3sww",
+    "createdAt": "2026-05-23T14:05:02.462Z",
+    "name": "s3-3ykqed-gcp",
+    "type": "S3 Bucket",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "kdaf3ea6k",
+    "createdAt": "2026-05-23T14:05:02.462Z",
+    "name": "iam-s0q2dp-azure",
+    "type": "IAM Role",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "ejjejny5e",
+    "createdAt": "2026-05-23T14:05:02.463Z",
+    "name": "k8s-s20fbe-gcp",
+    "type": "K8s Cluster",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "dsm9frtj3",
+    "createdAt": "2026-05-23T14:05:02.464Z",
+    "name": "k8s-asrwl6-aws",
+    "type": "K8s Cluster",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "a89hynfg6",
+    "createdAt": "2026-05-23T14:05:02.465Z",
+    "name": "virtual-3d9k-gcp",
+    "type": "Virtual Machine",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "t3bbv8x45",
+    "createdAt": "2026-05-23T14:05:02.465Z",
+    "name": "blob-woojm6-aws",
+    "type": "Blob Storage",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "1hxrjwcck",
+    "createdAt": "2026-05-23T14:05:02.466Z",
+    "name": "lambda-vwyh4-gcp",
+    "type": "Lambda Function",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "yp6r0fz9m",
+    "createdAt": "2026-05-23T14:05:02.467Z",
+    "name": "blob-6o5z9-gcp",
+    "type": "Blob Storage",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "cfyaww2dj",
+    "createdAt": "2026-05-23T14:05:02.467Z",
+    "name": "sql-d7cceb-aws",
+    "type": "SQL Database",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "y57r91si3",
+    "createdAt": "2026-05-23T14:05:02.468Z",
+    "name": "iam-1q0o5i-azure",
+    "type": "IAM Role",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "fzwoui94g",
+    "createdAt": "2026-05-23T14:05:02.793Z",
+    "name": "lambda-9hiag6-azure",
+    "type": "Lambda Function",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "3uo5zsuut",
+    "createdAt": "2026-05-23T14:05:02.794Z",
+    "name": "virtual-x0bi8-gcp",
+    "type": "Virtual Machine",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "vaj8870yv",
+    "createdAt": "2026-05-23T14:05:02.795Z",
+    "name": "lambda-ha9m95-aws",
+    "type": "Lambda Function",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "haajklvj5",
+    "createdAt": "2026-05-23T14:05:02.795Z",
+    "name": "s3-u0lr7g-azure",
+    "type": "S3 Bucket",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "w3nr3zpwc",
+    "createdAt": "2026-05-23T14:05:02.796Z",
+    "name": "virtual-rrkgew-aws",
+    "type": "Virtual Machine",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "eyfefctju",
+    "createdAt": "2026-05-23T14:05:02.797Z",
+    "name": "k8s-b6p1j6-gcp",
+    "type": "K8s Cluster",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "ezr8r85yb",
+    "createdAt": "2026-05-23T14:05:02.797Z",
+    "name": "blob-xrhvwk-gcp",
+    "type": "Blob Storage",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "j79zysync",
+    "createdAt": "2026-05-23T14:05:02.798Z",
+    "name": "k8s-ixgpam-aws",
+    "type": "K8s Cluster",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "a1x5cxgz6",
+    "createdAt": "2026-05-23T14:05:02.799Z",
+    "name": "s3-xirhqd-azure",
+    "type": "S3 Bucket",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "otnzspao9",
+    "createdAt": "2026-05-23T14:05:02.800Z",
+    "name": "lambda-nz89tqp-azure",
+    "type": "Lambda Function",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  }
+]

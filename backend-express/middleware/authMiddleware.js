@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const config = require('../config/config');
 
 exports.protect = async (req, res, next) => {
   try {
@@ -13,10 +14,18 @@ exports.protect = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret-key-12345');
+    const decoded = jwt.verify(token, config.jwt.secret);
 
     // Check if user still exists
-    const currentUser = await User.findById(decoded.id);
+    let currentUser;
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      const fileStorage = require('../utils/fileStorage');
+      currentUser = await fileStorage.findUserById(decoded.id);
+    } else {
+      currentUser = await User.findById(decoded.id);
+    }
+
     if (!currentUser) {
       return res.status(401).json({ message: 'The user belonging to this token no longer exists' });
     }

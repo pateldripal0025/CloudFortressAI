@@ -3,6 +3,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { ShieldAlert, AlertCircle } from 'lucide-react';
 import { io } from 'socket.io-client';
 
+import config from '../../config';
+
 const AlertToast = ({ t, alert }) => {
   const isCritical = alert.severity === 'Critical';
   return (
@@ -56,13 +58,13 @@ const AlertToast = ({ t, alert }) => {
 
 const LiveAlerts = ({ onAlert }) => {
   useEffect(() => {
-    const socket = io('http://localhost:5001', {
+    const socket = io(config.socketUrl, {
       transports: ['websocket'],
       upgrade: false
     });
 
     socket.on('connect', () => {
-      console.log('[WS] Connected to Express Socket.io server (Port 5001)');
+      console.log(`[WS] Connected to Express Socket.io server (${config.socketUrl})`);
     });
 
 

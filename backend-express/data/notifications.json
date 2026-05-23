@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "6lsk0o7j5",
+    "read": false,
+    "createdAt": "2026-05-23T14:05:00.823Z",
+    "title": "Global Scan Completed",
+    "message": "Security audit for Multi-Cloud in production finished. 5 new vulnerabilities detected.",
+    "severity": "high",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "utaborcle",
+    "read": false,
+    "createdAt": "2026-05-23T14:05:02.074Z",
+    "title": "Global Scan Completed",
+    "message": "Security audit for Multi-Cloud in production finished. 4 new vulnerabilities detected.",
+    "severity": "high",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "qi62cpfwm",
+    "read": false,
+    "createdAt": "2026-05-23T14:05:02.469Z",
+    "title": "Global Scan Completed",
+    "message": "Security audit for Multi-Cloud in production finished. 3 new vulnerabilities detected.",
+    "severity": "high",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "vrcgvncse",
+    "read": false,
+    "createdAt": "2026-05-23T14:05:02.801Z",
+    "title": "Global Scan Completed",
+    "message": "Security audit for Multi-Cloud in production finished. 4 new vulnerabilities detected.",
+    "severity": "high",
+    "tenantId": "ig9z8kmhd"
+  }
+]

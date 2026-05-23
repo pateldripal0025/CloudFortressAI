@@ -1,0 +1,21 @@
+{
+  "name": "cloudfortress-ai",
+  "version": "1.0.0",
+  "description": "Elite Cloud Security Command Center Orchestrator",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend-express\"",
+    "dev:full": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend-express\" \"cd backend && .\\venv\\Scripts\\uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\"",
+    "build": "npm run build --prefix frontend",
+    "start": "npm run start --prefix backend-express",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend-express",
+    "install:prod": "npm install --production && npm install --prefix backend-express --production && npm install --prefix frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "mongodb": "^7.2.0"
+  }
+}

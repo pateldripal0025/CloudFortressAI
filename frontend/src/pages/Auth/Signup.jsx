@@ -24,11 +24,12 @@ const Signup = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await register(formData);
-      toast.success('Account Provisioned Successfully!');
-      navigate('/dashboard');
+      const res = await register(formData);
+      toast.success('Account Initialized! Check your verification OTP code.');
+      const otpParam = res?.otp ? `&otp=${res.otp}` : '';
+      navigate(`/verify-email?email=${encodeURIComponent(formData.email)}${otpParam}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      toast.error(err.message || 'Registration failed');
     } finally {
       setIsSubmitting(false);
     }

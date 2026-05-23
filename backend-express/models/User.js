@@ -23,12 +23,32 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'analyst', 'viewer'],
-    default: 'analyst'
+    enum: ['admin', 'analyst', 'user'],
+    default: 'user'
   },
   organization: {
     type: String,
     default: 'Default Corp'
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  emailVerificationOTP: {
+    type: String,
+    select: false
+  },
+  emailVerificationExpires: {
+    type: Date,
+    select: false
+  },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    select: false
   },
   createdAt: {
     type: Date,
@@ -43,7 +63,6 @@ userSchema.pre('save', async function() {
   if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
 });
-
 
 // Method to check password
 userSchema.methods.comparePassword = async function(candidatePassword, userPassword) {

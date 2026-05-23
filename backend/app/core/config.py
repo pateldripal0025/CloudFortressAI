@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str = "secret"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    WEBHOOK_SECRET: str = "cf_webhook_secure_token_2026"
 
     # Redis
     REDIS_URL: str = "redis://127.0.0.1:6379/0"
@@ -17,6 +18,15 @@ class Settings(BaseSettings):
     # Environment
     ENV: str = "development"
     LOG_LEVEL: str = "info"
+
+    # CORS Configuration (Production Origins)
+    ALLOWED_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://cloudfortress.ai",
+        "https://admin.cloudfortress.ai"
+    ]
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const fileStorage = require('../utils/fileStorage');
 const Resource = require('../models/Resource');
 
 // @desc    Get all assets with summary counts
@@ -5,8 +7,38 @@ const Resource = require('../models/Resource');
 exports.getAssets = async (req, res) => {
   try {
     const environment = req.headers['x-env'] || 'production';
-    const tenantId = req.user.id;
+    const tenantId = req.user._id;
     
+    if (mongoose.connection.readyState !== 1) {
+      console.log('[Assets Fallback] MongoDB offline. Querying local files...');
+      let localAssets = fileStorage.getAssets().filter(a => a.tenantId === tenantId && a.environment === environment);
+      
+      if (localAssets.length === 0) {
+        console.log(`[Assets Fallback] Seeding enterprise resources for tenant: ${tenantId}`);
+        await exports.generateRandomAssets(tenantId, 50, environment);
+        localAssets = fileStorage.getAssets().filter(a => a.tenantId === tenantId && a.environment === environment);
+      }
+
+      const typeMap = {};
+      const providerMap = {};
+      localAssets.forEach(a => {
+        typeMap[a.type] = (typeMap[a.type] || 0) + 1;
+        providerMap[a.provider] = (providerMap[a.provider] || 0) + 1;
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          total: localAssets.length,
+          assets: localAssets.slice(0, 50),
+          distribution: {
+            types: Object.keys(typeMap).map(k => ({ type: k, count: typeMap[k] })),
+            providers: Object.keys(providerMap).map(k => ({ provider: k, count: providerMap[k] }))
+          }
+        }
+      });
+    }
+
     let totalCount = await Resource.countDocuments({ environment, tenantId });
 
     // Mass-seed if looking empty for this tenant
@@ -67,6 +99,15 @@ exports.generateRandomAssets = async (tenantId, count = 5, environment = 'produc
       });
     }
     
+    if (mongoose.connection.readyState !== 1) {
+      const inserted = [];
+      for (const a of newAssets) {
+        const item = await fileStorage.createAsset(a);
+        inserted.push(item);
+      }
+      return inserted;
+    }
+
     const inserted = await Resource.insertMany(newAssets);
     return inserted;
   } catch (err) {
@@ -74,4 +115,3 @@ exports.generateRandomAssets = async (tenantId, count = 5, environment = 'produc
     return [];
   }
 };
-

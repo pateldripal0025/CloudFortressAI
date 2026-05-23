@@ -14,12 +14,28 @@ const { getDashboardSummary, getAIPriorityInsights, getAnalytics } = require('..
 const { startScan, getScanHistory } = require('../controllers/scanController');
 const { getAssets } = require('../controllers/resourceController');
 const { getVulnerabilities } = require('../controllers/vulnerabilityController');
-const { register, login, getMe } = require('../controllers/authController');
+const { 
+  register, 
+  login, 
+  getMe, 
+  verifyEmail, 
+  refreshToken, 
+  logout, 
+  logoutAllDevices, 
+  forgotPassword, 
+  resetPassword 
+} = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Auth endpoints
 router.post('/auth/register', register);
+router.post('/auth/verify-email', verifyEmail);
 router.post('/auth/login', login);
+router.post('/auth/refresh', refreshToken);
+router.post('/auth/logout', logout);
+router.post('/auth/logout-all', protect, logoutAllDevices);
+router.post('/auth/forgot-password', forgotPassword);
+router.post('/auth/reset-password', resetPassword);
 router.get('/auth/me', protect, getMe);
 
 // Assets/Resources
@@ -62,5 +78,33 @@ router.get('/notifications', protect, getNotifications);
 router.put('/notifications/:id/read', protect, markAsRead);
 router.delete('/notifications/clear', protect, clearAll);
 
+// Real-time webhook from Python AI Engine (no auth needed for inter-service communication)
+router.post('/alerts/realtime', (req, res) => {
+    const alert = req.body;
+    
+    const notification = {
+        _id: Date.now().toString(),
+        type: 'threat_alert',
+        title: `Real-time Alert: ${alert.issue || 'Security Threat'}`,
+        message: `A high risk issue has been discovered on ${alert.resource_type} [${alert.resource}].`,
+        severity: (alert.severity || 'high').toLowerCase(),
+        resource: alert.resource,
+        createdAt: new Date().toISOString(),
+        read: false
+    };
+
+    // 1. Broadcast notification via Socket.io
+    req.io.emit('new_notification', notification);
+    
+    // 2. Refresh dashboard scans
+    req.io.emit('scan_completed', {
+        provider: alert.event_source ? alert.event_source.split('.')[0] : 'AWS',
+        totalRisks: 1,
+        severity: alert.severity
+    });
+    
+    res.json({ success: true, message: 'Real-time alert broadcasted successfully', notification });
+});
 
 module.exports = router;
+

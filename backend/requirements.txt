@@ -13,3 +13,4 @@ structlog==24.1.0
 boto3==1.34.34
 azure-mgmt-resource==23.1.0
 azure-identity==1.15.0
+gunicorn==21.2.0

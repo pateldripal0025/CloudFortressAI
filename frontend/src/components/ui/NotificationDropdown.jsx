@@ -3,11 +3,14 @@ import { Bell, Info, ShieldAlert, CheckCircle, Trash2, X, AlertTriangle, ShieldC
 import { io } from 'socket.io-client';
 import { riskService } from '../../services/api';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+import config from '../../config';
 
-const SOCKET_URL = 'http://localhost:5001';
+const SOCKET_URL = config.socketUrl;
 
 
 const NotificationDropdown = () => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +28,14 @@ const NotificationDropdown = () => {
 
     // 3. Socket.io Integration
     socketRef.current = io(SOCKET_URL);
+
+    // Register this specific operator's private room
+    if (user && user._id) {
+      console.log(`[Socket.IO] Authenticating operator channel room: ${user._id}`);
+      socketRef.current.emit('register_operator', user._id);
+    }
     
+    // Broad system-level scanner alerts
     socketRef.current.on('new_notification', (newNotif) => {
       setNotifications(prev => [newNotif, ...prev]);
       setUnreadCount(prev => prev + 1);
@@ -48,10 +58,28 @@ const NotificationDropdown = () => {
       }
     });
 
+    // Targeted personalized security alerts (logins, password shifts, suspicious browser hits)
+    socketRef.current.on('notification', (newNotif) => {
+      setNotifications(prev => [newNotif, ...prev]);
+      setUnreadCount(prev => prev + 1);
+      
+      if (Notification.permission === 'granted') {
+        new Notification(newNotif.title, {
+          body: newNotif.message,
+          icon: '/favicon.ico'
+        });
+      }
+
+      toast.error(`SECURITY WARNING: ${newNotif.message}`, { 
+        duration: 8000,
+        icon: '⚠️' 
+      });
+    });
+
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

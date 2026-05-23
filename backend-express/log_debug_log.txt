@@ -1,0 +1,51 @@
+﻿[dotenv@17.3.1] injecting env (4) from .env -- tip: ≡ƒ¢í∩╕Å auth for agents: https://vestauth.com
+[OK] Server running in development mode on port 5000
+MongoDB Connected: 127.0.0.1
+User connected to socket: oKbl332Z1G3dlYssAAAB
+User disconnected from socket: oKbl332Z1G3dlYssAAAB
+User connected to socket: khCmdUgJJtqhU63NAAAE
+node : [SERVER ERROR] SyntaxError: 
+Expected property name or '}' in JSON 
+at position 1 (line 1 column 2)
+At line:1 char:133
++ ... -Object { Stop-Process -Id $_ 
+-Force }; node server.js > log.txt 
+2>&1
++                                     
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: ([SERVER ERROR] ...ine 1 c  
+  olumn 2):String) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+    at JSON.parse (<anonymous>)
+    at parse 
+(E:\infodesk\CloudFortress AI\backend-
+express\node_modules\body-parser\lib\t
+ypes\json.js:72:19)
+    at E:\infodesk\CloudFortress AI\ba
+ckend-express\node_modules\body-parser
+\lib\read.js:162:18
+    at AsyncResource.runInAsyncScope 
+(node:async_hooks:214:14)
+    at invokeCallback 
+(E:\infodesk\CloudFortress AI\backend-
+express\node_modules\raw-body\index.js
+:238:16)
+    at done 
+(E:\infodesk\CloudFortress AI\backend-
+express\node_modules\raw-body\index.js
+:227:7)
+    at IncomingMessage.onEnd 
+(E:\infodesk\CloudFortress AI\backend-
+express\node_modules\raw-body\index.js
+:287:7)
+    at IncomingMessage.emit 
+(node:events:508:28)
+    at endReadableNT (node:internal/st
+reams/readable:1701:12)
+    at 
+process.processTicksAndRejections (nod
+e:internal/process/task_queues:89:21)

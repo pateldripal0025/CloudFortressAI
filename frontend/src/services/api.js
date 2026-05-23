@@ -1,7 +1,8 @@
 import axios from 'axios';
+import config from '../config';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5001/api',
+  baseURL: `${config.apiUrl}/api`,
 
   timeout: 10000,
   headers: {
@@ -25,12 +26,69 @@ api.interceptors.request.use(
   }
 );
 
-// Response Interceptor: Handle errors globally
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Response Interceptor: Handle errors globally and auto-rotate refresh tokens
 api.interceptors.response.use(
   (response) => {
     return response.data; // Standardize to return .data directly
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // Auto-refresh expired access tokens seamlessly
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/login') && !originalRequest.url.includes('/auth/register')) {
+      if (isRefreshing) {
+        return new Promise(function(resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        }).then(token => {
+          originalRequest.headers['Authorization'] = 'Bearer ' + token;
+          return api(originalRequest);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem('cf_refresh_token');
+      if (refreshToken) {
+        try {
+          const res = await axios.post(`${config.apiUrl}/api/auth/refresh`, { refreshToken });
+          if (res.data && res.data.token) {
+            const newAccessToken = res.data.token;
+            localStorage.setItem('cf_token', newAccessToken);
+            originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
+            processQueue(null, newAccessToken);
+            isRefreshing = false;
+            return api(originalRequest);
+          }
+        } catch (refreshError) {
+          processQueue(refreshError, null);
+          isRefreshing = false;
+          // Clear dead session credentials
+          localStorage.removeItem('cf_token');
+          localStorage.removeItem('cf_refresh_token');
+          // Trigger custom event or reload to clear state
+          window.dispatchEvent(new Event('auth_session_expired'));
+          return Promise.reject(refreshError);
+        }
+      }
+    }
+
     const message = error.response?.data?.message || error.message || 'An unexpected error occurred';
     console.error(`[API Response Error] ${error.config?.url}:`, message);
     return Promise.reject(error);
@@ -75,7 +133,7 @@ export const riskService = {
   
   exportRisksToCSV: async () => {
     // We need a fresh axios instance or bypass the interceptor for blob
-    const response = await axios.get('http://localhost:5001/api/risks/export', { 
+    const response = await axios.get(`${config.apiUrl}/api/risks/export`, { 
       responseType: 'blob',
       headers: { Authorization: `Bearer ${localStorage.getItem('cf_token')}` }
     });
@@ -88,7 +146,7 @@ export const riskService = {
   },
   
   downloadPDFReport: async (id) => {
-    const response = await axios.get(`http://localhost:5001/api/risks/${id}/report`, { 
+    const response = await axios.get(`${config.apiUrl}/api/risks/${id}/report`, { 
       responseType: 'blob',
       headers: { Authorization: `Bearer ${localStorage.getItem('cf_token')}` }
     });

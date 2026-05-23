@@ -26,11 +26,21 @@ const ResourceSphere = () => {
     try {
       setLoading(true);
       const res = await dashboardService.getResourceSphereData();
+      console.log('[ResourceSphere] API Response:', res);
+      
       if (res && res.success) {
         setData(res.data);
+        if (!res.data?.nodes || res.data.nodes.length === 0) {
+          console.warn('[ResourceSphere] No nodes received from API');
+          toast.error('No resources found in the sphere');
+        }
+      } else {
+        console.error('[ResourceSphere] Invalid response structure:', res);
+        toast.error('Invalid response from server');
       }
     } catch (err) {
-      toast.error('Neural mapping failed');
+      console.error('[ResourceSphere] Network or parsing error:', err);
+      toast.error(`Neural mapping failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
