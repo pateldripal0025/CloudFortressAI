@@ -21,6 +21,6 @@ azure-mgmt-resource==23.1.0
 azure-mgmt-compute==30.6.0
 azure-mgmt-storage==21.1.0
 azure-mgmt-network==25.3.0
-azure-mgmt-sql==4.0.0
+azure-mgmt-sql==3.0.1
 azure-identity==1.16.0
 gunicorn==21.2.0
