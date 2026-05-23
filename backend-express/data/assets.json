@@ -331,5 +331,59 @@
     "provider": "Azure",
     "environment": "production",
     "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "jllmvzsnr",
+    "createdAt": "2026-05-23T16:58:24.725Z",
+    "name": "lambda-9kwt9o-aws",
+    "type": "Lambda Function",
+    "provider": "AWS",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "a81u3pspi",
+    "createdAt": "2026-05-23T16:58:24.726Z",
+    "name": "lambda-m29fu6-azure",
+    "type": "Lambda Function",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "z76l4ejnb",
+    "createdAt": "2026-05-23T16:58:24.726Z",
+    "name": "sql-j2tzpe-gcp",
+    "type": "SQL Database",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "jfku8lcul",
+    "createdAt": "2026-05-23T16:58:24.727Z",
+    "name": "virtual-jip12n-azure",
+    "type": "Virtual Machine",
+    "provider": "Azure",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "992fw602j",
+    "createdAt": "2026-05-23T16:58:24.728Z",
+    "name": "iam-aoefy-gcp",
+    "type": "IAM Role",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "dk6oq8syr",
+    "createdAt": "2026-05-23T16:58:24.728Z",
+    "name": "blob-50cek-gcp",
+    "type": "Blob Storage",
+    "provider": "GCP",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd"
   }
 ]

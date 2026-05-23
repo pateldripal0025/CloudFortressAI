@@ -30,5 +30,13 @@
     "environment": "production",
     "tenantId": "ig9z8kmhd",
     "createdAt": "2026-05-23T14:04:59.750Z"
+  },
+  {
+    "_id": "avav75uyg",
+    "title": "Multi-Cloud Quick Scan",
+    "status": "Completed",
+    "environment": "production",
+    "tenantId": "ig9z8kmhd",
+    "createdAt": "2026-05-23T16:58:21.711Z"
   }
 ]

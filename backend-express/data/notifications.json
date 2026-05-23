@@ -34,5 +34,14 @@
     "message": "Security audit for Multi-Cloud in production finished. 4 new vulnerabilities detected.",
     "severity": "high",
     "tenantId": "ig9z8kmhd"
+  },
+  {
+    "_id": "1kd80yvn5",
+    "read": false,
+    "createdAt": "2026-05-23T16:58:24.729Z",
+    "title": "Global Scan Completed",
+    "message": "Security audit for Multi-Cloud in production finished. 4 new vulnerabilities detected.",
+    "severity": "high",
+    "tenantId": "ig9z8kmhd"
   }
 ]
