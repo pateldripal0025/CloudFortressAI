@@ -137,6 +137,7 @@ async def shutdown_event():
 
 # Include REST API Routers
 app.include_router(api_v1_router, prefix="/api/v1")
+app.include_router(api_v1_router, prefix="/api")
 
 # WebSocket endpoint registered at app level
 @app.websocket("/ws/alerts")

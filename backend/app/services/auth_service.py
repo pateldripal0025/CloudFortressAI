@@ -17,7 +17,7 @@ class AuthService:
         user = User(
             email=user_in.email,
             hashed_password=get_password_hash(user_in.password),
-            full_name=user_in.full_name
+            full_name=user_in.full_name or user_in.name
         )
         return await user_repo.create(user)
 
