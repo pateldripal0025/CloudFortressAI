@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, Request, HTTPException
+from fastapi import APIRouter, status, Depends, Request, HTTPException, Body
 from typing import Optional
 from fastapi.security import OAuth2PasswordRequestForm
 from app.schemas.user_schema import UserCreate, UserLogin, UserResponse, Token
@@ -19,17 +19,20 @@ async def signup(user_in: UserCreate):
         raise e
 
 @router.post("/login", response_model=Token)
-async def login(request: Request):
-    # Try to parse as JSON first (Postman/Frontend style)
-    try:
-        body = await request.json()
-        user_in = UserLogin(**body)
-    except Exception:
-        # Fallback to Form data (Swagger style)
-        try:
-            form_data = await request.form()
-            user_in = UserLogin(email=form_data.get("username"), password=form_data.get("password"))
-        except Exception:
-            raise HTTPException(status_code=400, detail="Invalid login data format")
+async def login(request: Request, user_in: Optional[UserLogin] = Body(None)):
+    # Try using JSON body parsed by FastAPI/Pydantic
+    if user_in:
+        return await auth_service.login(user_in)
     
-    return await auth_service.login(user_in)
+    # Fallback to Form data (Swagger OAuth2 style)
+    try:
+        form_data = await request.form()
+        username = form_data.get("username")
+        password = form_data.get("password")
+        if username and password:
+            user_in = UserLogin(email=username, password=password)
+            return await auth_service.login(user_in)
+    except Exception:
+        pass
+        
+    raise HTTPException(status_code=400, detail="Invalid login data format. Provide JSON body or Form data.")
