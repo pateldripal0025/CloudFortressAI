@@ -142,7 +142,7 @@ app.get('/api/health', (req, res) => {
 });
 
 const PORT = config.port;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`CloudFortress AI Engine running on port ${PORT} [Mode: ${config.env}]`);
 });
 // Live reload touch for updated Atlas Mongo DB URI.
