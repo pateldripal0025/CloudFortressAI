@@ -71,30 +71,27 @@ function App() {
 
         <Router>
           <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            {/* Redirect Auth Routes to Dashboard */}
+            <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/signup" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/forgot-password" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/reset-password" element={<Navigate to="/dashboard" replace />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
 
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<AppLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="threat-surface" element={<ThreatSurface />} />
-                <Route path="resource-sphere" element={<ResourceSphere />} />
-                <Route path="resources" element={<Resources />} />
-                <Route path="scans" element={<Scans />} />
-                <Route path="compliance" element={<Compliance />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="reports" element={<Reports />} />
-                <Route path="sitemap" element={<Sitemap />} />
-                <Route path="risk" element={<RiskPage />} />
-
-              </Route>
+            {/* Public Command Center Routes (No Auth Wall) */}
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="threat-surface" element={<ThreatSurface />} />
+              <Route path="resource-sphere" element={<ResourceSphere />} />
+              <Route path="resources" element={<Resources />} />
+              <Route path="scans" element={<Scans />} />
+              <Route path="compliance" element={<Compliance />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="sitemap" element={<Sitemap />} />
+              <Route path="risk" element={<RiskPage />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

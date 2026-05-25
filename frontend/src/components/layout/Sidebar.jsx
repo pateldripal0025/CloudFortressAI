@@ -118,14 +118,6 @@ const Sidebar = () => {
                   <p className="text-[9px] text-slate-500 font-bold tracking-wider">{displayRole}</p>
                 </div>
               </div>
-              
-              <button 
-                onClick={logout}
-                title="Disconnect Operator Session"
-                className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/5 hover:border-rose-500/20 transition-all duration-300 shrink-0"
-              >
-                <LogOut size={16} />
-              </button>
             </div>
           </footer>
         </div>

@@ -10,13 +10,32 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('cf_token'));
   const [loading, setLoading] = useState(true);
 
-  // 1. Fetch current operator profile if token exists on mount
+  // 1. Fetch current operator profile if token exists on mount, or auto-log in as guest
   useEffect(() => {
-    if (token) {
-      fetchMe();
-    } else {
-      setLoading(false);
-    }
+    const initAuth = async () => {
+      if (token) {
+        await fetchMe();
+      } else {
+        try {
+          console.log('[Auth] Initializing guest access link...');
+          const res = await api.post('/auth/login', { email: 'test@user.com', password: 'password' });
+          if (res && res.token) {
+            localStorage.setItem('cf_token', res.token);
+            localStorage.setItem('cf_refresh_token', res.refreshToken);
+            setToken(res.token);
+            setUser(res.data.user);
+          } else {
+            throw new Error('Invalid guest auth response');
+          }
+        } catch (err) {
+          console.error('[Auth] Guest initialization failed, fallback to local bypass:', err);
+          setUser({ fullname: 'Security Operator', email: 'operator@cloudfortress.ai', role: 'admin' });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    initAuth();
   }, [token]);
 
   // 2. Global event listener for expired credentials (intercepted by Axios)
