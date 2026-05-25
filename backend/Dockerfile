@@ -2,10 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies (required for some Python packages)
+# Install system dependencies (required for compiling numpy/scikit-learn and running OpenMP)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    g++ \
     python3-dev \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency file

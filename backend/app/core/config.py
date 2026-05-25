@@ -25,7 +25,8 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://localhost:5174",
         "https://cloudfortress.ai",
-        "https://admin.cloudfortress.ai"
+        "https://admin.cloudfortress.ai",
+        "https://cloud-fortress-ai.vercel.app"
     ]
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

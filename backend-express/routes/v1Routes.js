@@ -18,10 +18,8 @@ const {
   register, 
   login, 
   getMe, 
-  verifyEmail, 
   refreshToken, 
   logout, 
-  logoutAllDevices, 
   forgotPassword, 
   resetPassword 
 } = require('../controllers/authController');
@@ -29,11 +27,9 @@ const { protect } = require('../middleware/authMiddleware');
 
 // Auth endpoints
 router.post('/auth/register', register);
-router.post('/auth/verify-email', verifyEmail);
 router.post('/auth/login', login);
 router.post('/auth/refresh', refreshToken);
 router.post('/auth/logout', logout);
-router.post('/auth/logout-all', protect, logoutAllDevices);
 router.post('/auth/forgot-password', forgotPassword);
 router.post('/auth/reset-password', resetPassword);
 router.get('/auth/me', protect, getMe);

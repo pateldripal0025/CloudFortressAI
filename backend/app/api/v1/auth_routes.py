@@ -1,6 +1,5 @@
 from fastapi import APIRouter, status, Depends, Request, HTTPException, Body
 from typing import Optional
-from fastapi.security import OAuth2PasswordRequestForm
 from app.schemas.user_schema import UserCreate, UserLogin, UserResponse, Token
 from app.services.auth_service import auth_service
 from app.api.v1.deps import get_current_user
@@ -16,7 +15,7 @@ async def signup(user_in: UserCreate):
     logger.info("signup_request_received", email=user_in.email)
     try:
         user = await auth_service.signup(user_in)
-        logger.info("signup_success", user_id=user.id, user_obj=user.model_dump())
+        logger.info("signup_success", user_id=user.id)
         return user
     except Exception as e:
         logger.error("signup_exception", error=str(e))
@@ -29,11 +28,21 @@ async def register(user_in: UserCreate):
     try:
         user = await auth_service.signup(user_in)
         logger.info("register_success", user_id=user.id)
+        
+        # Generate token directly for automatic redirect
+        access_token = create_access_token(subject=user.email)
         return {
             "status": "success",
-            "message": "Account initialized! Please complete verification via the OTP sent to your email.",
-            "email": user.email,
-            "otp": "123456"
+            "token": access_token,
+            "refreshToken": f"fallback-refresh-token-{user.id}",
+            "data": {
+                "user": {
+                    "id": str(user.id),
+                    "email": user.email,
+                    "fullname": user.fullname,
+                    "role": user.role
+                }
+            }
         }
     except Exception as e:
         logger.error("register_exception", error=str(e))
@@ -41,12 +50,11 @@ async def register(user_in: UserCreate):
 
 @router.post("/login")
 async def login(request: Request, user_in: Optional[UserLogin] = Body(None)):
-    # Try using JSON body parsed by FastAPI/Pydantic
     resolved_user_in = None
     if user_in:
         resolved_user_in = user_in
     else:
-        # Fallback to Form data (Swagger OAuth2 style)
+        # Fallback to Form data (Swagger style)
         try:
             form_data = await request.form()
             username = form_data.get("username")
@@ -72,35 +80,8 @@ async def login(request: Request, user_in: Optional[UserLogin] = Body(None)):
             "user": {
                 "id": str(user.id),
                 "email": user.email,
-                "full_name": user.full_name,
-                "name": user.full_name
-            }
-        }
-    }
-
-@router.post("/verify-email")
-async def verify_email(body: dict = Body(...)):
-    email = body.get("email")
-    otp = body.get("otp")
-    if not email:
-        raise HTTPException(status_code=400, detail="Email is required")
-        
-    user = await user_repo.get_by_email(email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-        
-    access_token = create_access_token(subject=user.email)
-    return {
-        "status": "success",
-        "message": "Email verification successful!",
-        "token": access_token,
-        "refreshToken": f"fallback-refresh-token-{user.id}",
-        "data": {
-            "user": {
-                "id": str(user.id),
-                "email": user.email,
-                "full_name": user.full_name,
-                "name": user.full_name
+                "fullname": user.fullname,
+                "role": user.role
             }
         }
     }
@@ -115,19 +96,14 @@ async def get_me(current_user: Optional[User] = Depends(get_current_user)):
             "user": {
                 "id": str(current_user.id),
                 "email": current_user.email,
-                "full_name": current_user.full_name,
-                "name": current_user.full_name,
-                "is_active": current_user.is_active
+                "fullname": current_user.fullname,
+                "role": current_user.role
             }
         }
     }
 
 @router.post("/logout")
 async def logout():
-    return {"status": "success", "message": "Logged out successfully"}
-
-@router.post("/logout-all")
-async def logout_all():
     return {"status": "success", "message": "Logged out successfully"}
 
 @router.post("/forgot-password")

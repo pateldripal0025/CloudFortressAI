@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('cf_token'));
   const [loading, setLoading] = useState(true);
 
-  // Monitor access token verification
+  // 1. Fetch current operator profile if token exists on mount
   useEffect(() => {
     if (token) {
       fetchMe();
@@ -19,10 +19,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // Session-expire event handler
+  // 2. Global event listener for expired credentials (intercepted by Axios)
   useEffect(() => {
     const handleSessionExpired = () => {
-      console.warn('[AuthContext] Session expired event triggered locally.');
+      console.warn('[Security Center] Session credentials expired. Revoking local access.');
       localClearAuth();
     };
     window.addEventListener('auth_session_expired', handleSessionExpired);
@@ -41,50 +41,47 @@ export const AuthProvider = ({ children }) => {
   const fetchMe = async () => {
     try {
       const res = await api.get('/auth/me');
-      if (res?.data) {
+      if (res?.data?.user) {
         setUser(res.data.user);
+      } else {
+        localClearAuth();
       }
     } catch (err) {
-      console.error('[AuthContext] fetchMe session validation failed:', err.message);
+      console.error('[Security Hub] Profile authentication failed:', err.message);
       localClearAuth();
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, rememberMe = true) => {
     const res = await api.post('/auth/login', { email, password });
     if (res && res.token) {
+      // Manage session persistence
+      if (rememberMe) {
+        localStorage.setItem('cf_token', res.token);
+        localStorage.setItem('cf_refresh_token', res.refreshToken);
+      } else {
+        sessionStorage.setItem('cf_token', res.token);
+      }
+      setToken(res.token);
+      setUser(res.data.user);
+      return res.data.user;
+    }
+    throw new Error(res?.message || 'Authentication credentials rejected.');
+  };
+
+  const register = async (fullname, email, password) => {
+    const res = await api.post('/auth/register', { fullname, email, password });
+    if (res && res.token) {
+      // Auto-authenticate operator on successful account registration
       localStorage.setItem('cf_token', res.token);
       localStorage.setItem('cf_refresh_token', res.refreshToken);
       setToken(res.token);
       setUser(res.data.user);
       return res.data.user;
     }
-    throw new Error(res?.message || 'Login failed');
-  };
-
-  const register = async (userData) => {
-    // Register unverified profile; will require OTP verification page redirection next
-    const res = await api.post('/auth/register', userData);
-    if (res && res.status === 'success') {
-      return res;
-    }
-    throw new Error(res?.message || 'Registration failed');
-  };
-
-  const verifyEmail = async (email, otp) => {
-    const res = await api.post('/auth/verify-email', { email, otp });
-    if (res && res.status === 'success') {
-      if (res.token) {
-        localStorage.setItem('cf_token', res.token);
-        localStorage.setItem('cf_refresh_token', res.refreshToken);
-        setToken(res.token);
-        setUser(res.data.user);
-      }
-      return res;
-    }
-    throw new Error(res?.message || 'Email verification failed');
+    throw new Error(res?.message || 'Failed to register operator credentials.');
   };
 
   const logout = async () => {
@@ -94,18 +91,10 @@ export const AuthProvider = ({ children }) => {
         await api.post('/auth/logout', { refreshToken });
       }
     } catch (e) {
-      console.error('[AuthContext] Remote logout failed:', e.message);
+      console.warn('[Security Hub] Stateless logout completed.');
     }
     localClearAuth();
-  };
-
-  const logoutAllDevices = async () => {
-    try {
-      await api.post('/auth/logout-all');
-    } catch (e) {
-      console.error('[AuthContext] Remote logout all failed:', e.message);
-    }
-    localClearAuth();
+    sessionStorage.removeItem('cf_token');
   };
 
   const forgotPassword = async (email) => {
@@ -113,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     if (res && res.status === 'success') {
       return res;
     }
-    throw new Error(res?.message || 'Failed to dispatch reset instructions');
+    throw new Error(res?.message || 'Failed to dispatch override link.');
   };
 
   const resetPassword = async (token, password) => {
@@ -121,7 +110,7 @@ export const AuthProvider = ({ children }) => {
     if (res && res.status === 'success') {
       return res;
     }
-    throw new Error(res?.message || 'Failed to reset password');
+    throw new Error(res?.message || 'Failed to reset credential keys.');
   };
 
   return (
@@ -132,9 +121,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         register,
-        verifyEmail,
         logout,
-        logoutAllDevices,
         forgotPassword,
         resetPassword
       }}

@@ -4,11 +4,11 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class User(BaseModel):
     id: Optional[str] = None
+    fullname: str
     email: EmailStr
-    hashed_password: str
-    full_name: Optional[str] = None
-    is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    password: str
+    role: str = "user"
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    updatedAt: datetime = Field(default_factory=datetime.utcnow)
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)

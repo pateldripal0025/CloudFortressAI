@@ -16,14 +16,15 @@ class AuthService:
         
         user = User(
             email=user_in.email,
-            hashed_password=get_password_hash(user_in.password),
-            full_name=user_in.full_name or user_in.name
+            password=get_password_hash(user_in.password),
+            fullname=user_in.fullname or "Security Node",
+            role=user_in.role or "user"
         )
         return await user_repo.create(user)
 
     async def login(self, user_in: UserLogin) -> Token:
         user = await user_repo.get_by_email(user_in.email)
-        if not user or not verify_password(user_in.password, user.hashed_password):
+        if not user or not verify_password(user_in.password, user.password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password",

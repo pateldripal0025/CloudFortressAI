@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  name: {
+  fullname: {
     type: String,
-    required: [true, 'Name is required'],
+    required: [true, 'Full name is required'],
     trim: true
   },
   email: {
@@ -25,37 +25,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'analyst', 'user'],
     default: 'user'
-  },
-  organization: {
-    type: String,
-    default: 'Default Corp'
-  },
-  isEmailVerified: {
-    type: Boolean,
-    default: false
-  },
-  emailVerificationOTP: {
-    type: String,
-    select: false
-  },
-  emailVerificationExpires: {
-    type: Date,
-    select: false
-  },
-  passwordResetToken: {
-    type: String,
-    select: false
-  },
-  passwordResetExpires: {
-    type: Date,
-    select: false
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
-  timestamps: true
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 });
 
 // Hash password before saving
@@ -64,7 +36,7 @@ userSchema.pre('save', async function() {
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-// Method to check password
+// Method to check password correctness
 userSchema.methods.comparePassword = async function(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };

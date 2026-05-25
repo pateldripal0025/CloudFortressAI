@@ -10,11 +10,13 @@ import {
   X,
   Globe,
   Component,
-  Map
+  Map,
+  LogOut
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 
 const SidebarItem = ({ to, icon: Icon, label, onClick }) => (
   <NavLink 
@@ -44,6 +46,13 @@ const SidebarItem = ({ to, icon: Icon, label, onClick }) => (
 
 const Sidebar = () => {
   const { isSidebarOpen, closeSidebar } = useApp();
+  const { user, logout } = useAuth();
+
+  const initials = user?.fullname 
+    ? user.fullname.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() 
+    : 'CF';
+  const displayName = user?.fullname || 'Security Node';
+  const displayRole = user?.role ? `${user.role.toUpperCase()} OPERATOR` : 'ANALYST ALPHA';
 
   return (
     <>
@@ -99,12 +108,24 @@ const Sidebar = () => {
 
 
           <footer className="mt-auto pt-8 border-t border-white/5">
-            <div className="p-4 bg-slate-900/50 rounded-2xl border border-white/5 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-orange-500 flex items-center justify-center text-xs font-black text-white shadow-lg">CF</div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white truncate">Security Node</p>
-                <p className="text-[10px] text-slate-500 font-bold">Admin Alpha</p>
+            <div className="p-4 bg-slate-900/50 rounded-2xl border border-white/5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-black text-[#030711] shadow-lg shrink-0">
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-white truncate">{displayName}</p>
+                  <p className="text-[9px] text-slate-500 font-bold tracking-wider">{displayRole}</p>
+                </div>
               </div>
+              
+              <button 
+                onClick={logout}
+                title="Disconnect Operator Session"
+                className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/5 hover:border-rose-500/20 transition-all duration-300 shrink-0"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
           </footer>
         </div>

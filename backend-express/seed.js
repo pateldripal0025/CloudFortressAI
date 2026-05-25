@@ -8,10 +8,10 @@ const User = require('./models/User');
 
 // Test user that will be created
 const testUser = {
-  name: "Test User",
-  email: "test@cloudfortress.ai",
-  password: "TestPassword123",
-  organization: "CloudFortress"
+  fullname: "Test User",
+  email: "test@user.com",
+  password: "password",
+  role: "admin"
 };
 
 const sampleRisks = [
@@ -113,8 +113,10 @@ const seedDB = async () => {
     console.log(`[Seed] Inserted ${risksWithTenant.length} risks`);
     
     // Insert scans and vulnerabilities
-    await Scan.insertMany(sampleScans);
-    await Vulnerability.insertMany(sampleVulnerabilities);
+    const scansWithTenant = sampleScans.map(s => ({ ...s, tenantId }));
+    const vulnerabilitiesWithTenant = sampleVulnerabilities.map(v => ({ ...v, tenantId }));
+    await Scan.insertMany(scansWithTenant);
+    await Vulnerability.insertMany(vulnerabilitiesWithTenant);
     
     console.log("Database seeded successfully with Risks, Resources, and Scans!");
     process.exit();

@@ -3,11 +3,11 @@ from typing import Optional
 
 class UserBase(BaseModel):
     email: EmailStr
-    full_name: Optional[str] = None
-    name: Optional[str] = None
+    fullname: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
+    role: Optional[str] = "user"
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -15,7 +15,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: str
-    is_active: bool = True
+    role: str = "user"
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
