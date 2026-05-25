@@ -1,9 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import model_validator
 from typing import Optional
 
 class Settings(BaseSettings):
     # MongoDB
     MONGODB_URI: str = "mongodb://127.0.0.1:27017"
+    DATABASE_URL: Optional[str] = None
     DB_NAME: str = "cloudfortress_ai"
 
     # JWT Security
@@ -18,6 +20,7 @@ class Settings(BaseSettings):
     # Environment
     ENV: str = "development"
     LOG_LEVEL: str = "info"
+    FRONTEND_URL: Optional[str] = None
 
     # CORS Configuration (Production Origins)
     ALLOWED_ORIGINS: list[str] = [
@@ -28,6 +31,14 @@ class Settings(BaseSettings):
         "https://admin.cloudfortress.ai",
         "https://cloud-fortress-ai.vercel.app"
     ]
+
+    @model_validator(mode="after")
+    def resolve_configs(self) -> 'Settings':
+        if self.DATABASE_URL:
+            self.MONGODB_URI = self.DATABASE_URL
+        if self.FRONTEND_URL and self.FRONTEND_URL not in self.ALLOWED_ORIGINS:
+            self.ALLOWED_ORIGINS.append(self.FRONTEND_URL)
+        return self
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

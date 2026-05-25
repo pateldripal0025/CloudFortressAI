@@ -89,7 +89,7 @@ api.interceptors.response.use(
       }
     }
 
-    const message = error.response?.data?.message || error.message || 'An unexpected error occurred';
+    const message = error.response?.data?.message || error.response?.data?.detail || error.message || 'An unexpected error occurred';
     console.error(`[API Response Error] ${error.config?.url}:`, message);
     error.message = message; // Permanently override with detailed backend response message
     return Promise.reject(error);

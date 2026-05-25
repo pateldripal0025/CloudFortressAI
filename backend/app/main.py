@@ -67,7 +67,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     logger.error("http_exception", path=request.url.path, status_code=exc.status_code, detail=exc.detail)
     return JSONResponse(
         status_code=exc.status_code,
-        content={"success": False, "detail": exc.detail, "code": "HTTP_ERROR"}
+        content={"success": False, "detail": exc.detail, "message": exc.detail, "code": "HTTP_ERROR"}
     )
 
 @app.exception_handler(RequestValidationError)
@@ -78,6 +78,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={
             "success": False, 
             "detail": "Validation error", 
+            "message": "Validation error",
             "errors": exc.errors(),
             "code": "VALIDATION_ERROR"
         }
@@ -115,7 +116,7 @@ async def log_requests_middleware(request: Request, call_next):
         )
         return JSONResponse(
             status_code=500, 
-            content={"detail": "Internal Server Error", "error": str(e)}
+            content={"detail": "Internal Server Error", "message": "Internal Server Error", "error": str(e)}
         )
 
 # Concurrent & Optimized Startup Events
