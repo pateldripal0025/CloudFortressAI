@@ -9,7 +9,8 @@
     "build": "npm run build --prefix frontend",
     "start": "npm run start --prefix backend-express",
     "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend-express",
-    "install:prod": "npm install --production && npm install --prefix backend-express --production && npm install --prefix frontend"
+    "install:prod": "npm install --production && npm install --prefix backend-express --production && npm install --prefix frontend",
+    "postinstall": "npm install --prefix backend-express"
   },
   "keywords": [],
   "author": "",

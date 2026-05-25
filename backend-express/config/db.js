@@ -66,6 +66,7 @@ const connectDB = async () => {
 
   try {
     console.log(`Connecting to database at ${maskedUri}...`);
+    mongoose.set('bufferCommands', false); // Disable query buffering when disconnected to fail fast
     const conn = await mongoose.connect(escapedUri);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
@@ -74,6 +75,11 @@ const connectDB = async () => {
     console.error(`URI attempted: ${maskedUri}`);
     console.error(`Error details: ${error.message}`);
     console.error(`============================================================`);
+    
+    // In production, exit the process so Railway can flag the service as unhealthy and restart
+    if (config.env === 'production') {
+      process.exit(1);
+    }
   }
 };
 
