@@ -175,5 +175,23 @@ export const assetService = {
   getAssets: () => api.get('/assets'),
 };
 
+export const complianceService = {
+  getSummary: () => api.get('/compliance/summary'),
+  downloadPDFReport: async () => {
+    const response = await axios.get(`${config.apiUrl}/api/compliance/report`, { 
+      responseType: 'blob',
+      headers: { Authorization: `Bearer ${localStorage.getItem('cf_token')}` }
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Compliance_Audit_Report_${new Date().getTime()}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  }
+};
+
 export { pythonApi };
 export default api;

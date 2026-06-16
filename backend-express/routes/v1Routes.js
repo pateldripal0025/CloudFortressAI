@@ -10,6 +10,7 @@ const {
 } = require('../controllers/riskController');
 const { globalSearch } = require('../controllers/searchController');
 const { getNotifications, markAsRead, clearAll } = require('../controllers/notificationController');
+const { getComplianceSummary, getComplianceReport } = require('../controllers/complianceController');
 const { getDashboardSummary, getAIPriorityInsights, getAnalytics } = require('../controllers/dashboardController');
 const { startScan, getScanHistory } = require('../controllers/scanController');
 const { getAssets } = require('../controllers/resourceController');
@@ -73,6 +74,10 @@ router.get('/search', protect, globalSearch);
 router.get('/notifications', protect, getNotifications);
 router.put('/notifications/:id/read', protect, markAsRead);
 router.delete('/notifications/clear', protect, clearAll);
+
+// Compliance endpoints
+router.get('/compliance/summary', protect, getComplianceSummary);
+router.get('/compliance/report', protect, getComplianceReport);
 
 // Real-time webhook from Python AI Engine (no auth needed for inter-service communication)
 router.post('/alerts/realtime', async (req, res) => {
