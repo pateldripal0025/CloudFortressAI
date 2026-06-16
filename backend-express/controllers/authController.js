@@ -272,3 +272,80 @@ exports.resetPassword = async (req, res) => {
     message: 'Credentials updated successfully! You can now log into the Fortress Center.'
   });
 };
+
+/**
+ * @desc    Update Current Operator Session Profile
+ * @route   PUT /api/auth/update-profile
+ * @access  Private
+ */
+exports.updateProfile = async (req, res) => {
+  try {
+    const { fullname, email, password } = req.body;
+    const mongoose = require('mongoose');
+    const fileStorage = require('../utils/fileStorage');
+
+    if (mongoose.connection.readyState !== 1) {
+      try {
+        const updated = await fileStorage.updateUser(req.user._id, { fullname, email, password });
+        return res.status(200).json({
+          status: 'success',
+          data: {
+            user: updated
+          }
+        });
+      } catch (err) {
+        return res.status(400).json({
+          status: 'fail',
+          message: err.message
+        });
+      }
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Operator profile not found.'
+      });
+    }
+
+    if (fullname) user.fullname = fullname;
+    if (email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'An operator profile with this work email address already exists.'
+        });
+      }
+      user.email = email;
+    }
+    if (password) {
+      if (password.length < 8) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Password must be at least 8 characters long.'
+        });
+      }
+      user.password = password;
+    }
+
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: userData
+      }
+    });
+  } catch (err) {
+    console.error('[Update Profile Exception]', err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to update operator profile.'
+    });
+  }
+};

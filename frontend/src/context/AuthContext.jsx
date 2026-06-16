@@ -132,6 +132,15 @@ export const AuthProvider = ({ children }) => {
     throw new Error(res?.message || 'Failed to reset credential keys.');
   };
 
+  const updateUserProfile = async (fullname, email, password) => {
+    const res = await api.put('/auth/update-profile', { fullname, email, password });
+    if (res && res.status === 'success') {
+      setUser(res.data.user);
+      return res.data.user;
+    }
+    throw new Error(res?.message || 'Failed to update profile.');
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -142,7 +151,8 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         forgotPassword,
-        resetPassword
+        resetPassword,
+        updateUserProfile
       }}
     >
       {children}

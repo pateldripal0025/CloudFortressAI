@@ -23,7 +23,8 @@ const {
   refreshToken, 
   logout, 
   forgotPassword, 
-  resetPassword 
+  resetPassword,
+  updateProfile
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -35,6 +36,7 @@ router.post('/auth/logout', logout);
 router.post('/auth/forgot-password', forgotPassword);
 router.post('/auth/reset-password', resetPassword);
 router.get('/auth/me', protect, getMe);
+router.put('/auth/update-profile', protect, updateProfile);
 
 // Assets/Resources
 router.get('/assets', protect, getAssets);

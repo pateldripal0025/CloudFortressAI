@@ -17,10 +17,44 @@ import {
   Server
 } from 'lucide-react';
 import { connectorService } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import GlassCard from '../components/ui/GlassCard';
 import toast from 'react-hot-toast';
 
 const Settings = () => {
+  // Auth state
+  const { user, updateUserProfile } = useAuth();
+  const [profileName, setProfileName] = useState(user?.fullname || '');
+  const [profileEmail, setProfileEmail] = useState(user?.email || '');
+  const [profilePassword, setProfilePassword] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setProfileName(user.fullname || '');
+      setProfileEmail(user.email || '');
+    }
+  }, [user]);
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (!profileName || !profileEmail) {
+      toast.error('Name and Email are required.');
+      return;
+    }
+
+    try {
+      setSavingProfile(true);
+      await updateUserProfile(profileName, profileEmail, profilePassword || undefined);
+      toast.success('Operator profile updated successfully.');
+      setProfilePassword('');
+    } catch (err) {
+      toast.error(err.message || 'Failed to update operator profile.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   // Cloud Connectors state
   const [connectors, setConnectors] = useState([]);
   const [loadingConnectors, setLoadingConnectors] = useState(true);
@@ -439,6 +473,68 @@ const Settings = () => {
         {/* Right Column: Slack Notifications & Quick Profile */}
         <div className="space-y-8">
           
+          {/* Operator Profile Card */}
+          <GlassCard className="p-8 border-white/5 bg-slate-950/40 backdrop-blur-3xl relative overflow-hidden">
+            <div className="flex items-center gap-3 mb-6">
+              <User className="text-cyan-400" size={20} />
+              <h3 className="text-lg font-black text-white uppercase tracking-wider">Operator Profile</h3>
+            </div>
+
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 rounded-full bg-cyan-500/10 border-2 border-cyan-400/20 flex items-center justify-center font-bold text-cyan-400 text-lg uppercase tracking-wide">
+                  {profileName.slice(0, 2) || 'OP'}
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white uppercase tracking-wider">{profileName || 'Anonymous Operator'}</h4>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{user?.role || 'security auditor'} // active session</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Work Name</label>
+                <input 
+                  type="text" 
+                  value={profileName}
+                  onChange={(e) => setProfileName(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500/40"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Work Email</label>
+                <input 
+                  type="email" 
+                  value={profileEmail}
+                  onChange={(e) => setProfileEmail(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500/40"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Update Credentials Key (Optional)</label>
+                <input 
+                  type="password" 
+                  placeholder="NEW SECRET PASSWORD..." 
+                  value={profilePassword}
+                  onChange={(e) => setProfilePassword(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500/40"
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={savingProfile}
+                className="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-[10px] font-black uppercase tracking-widest py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+              >
+                {savingProfile ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                SAVE_PROFILE
+              </button>
+            </form>
+          </GlassCard>
+
           {/* Slack Alerting Settings */}
           <GlassCard className="p-8 border-white/5 bg-slate-950/40 backdrop-blur-3xl relative overflow-hidden">
             <div className="flex items-center gap-3 mb-6">

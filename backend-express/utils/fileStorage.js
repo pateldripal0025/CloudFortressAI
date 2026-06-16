@@ -92,6 +92,26 @@ exports.comparePassword = async (candidatePassword, hashedPassword) => {
   return await bcrypt.compare(candidatePassword, hashedPassword);
 };
 
+exports.updateUser = async (id, updateData) => {
+  const users = getUsers();
+  const user = users.find(u => u._id === id);
+  if (!user) throw new Error('User not found');
+
+  if (updateData.fullname) user.fullname = updateData.fullname;
+  if (updateData.email) {
+    const duplicate = users.find(u => u.email === updateData.email && u._id !== id);
+    if (duplicate) throw new Error('Email already in use');
+    user.email = updateData.email;
+  }
+  if (updateData.password) {
+    user.password = await bcrypt.hash(updateData.password, 12);
+  }
+
+  saveUsers(users);
+  const { password, ...userWithoutPassword } = user;
+  return { ...userWithoutPassword, _id: user._id };
+};
+
 // ================= RISK STORAGE =================
 
 exports.getRisks = () => {
