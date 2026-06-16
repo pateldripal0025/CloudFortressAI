@@ -7,6 +7,7 @@ const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const RISKS_FILE = path.join(DATA_DIR, 'risks.json');
 const ASSETS_FILE = path.join(DATA_DIR, 'assets.json');
 const NOTIFICATIONS_FILE = path.join(DATA_DIR, 'notifications.json');
+const CONNECTORS_FILE = path.join(DATA_DIR, 'connectors.json');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -24,6 +25,7 @@ initFile(USERS_FILE);
 initFile(RISKS_FILE);
 initFile(ASSETS_FILE);
 initFile(NOTIFICATIONS_FILE);
+initFile(CONNECTORS_FILE);
 
 const generateId = () => {
   return Math.random().toString(36).substr(2, 9);
@@ -183,4 +185,36 @@ exports.createNotification = async (notifData) => {
   notifications.push(newNotif);
   exports.saveNotifications(notifications);
   return newNotif;
+};
+
+// ================= CONNECTORS STORAGE =================
+
+exports.getConnectors = () => {
+  try {
+    const data = fs.readFileSync(CONNECTORS_FILE, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
+  }
+};
+
+exports.saveConnectors = (connectors) => {
+  try {
+    fs.writeFileSync(CONNECTORS_FILE, JSON.stringify(connectors, null, 2));
+  } catch (err) {
+    console.error('Error saving connectors:', err);
+  }
+};
+
+exports.createConnector = async (connectorData) => {
+  const connectors = exports.getConnectors();
+  const newConnector = {
+    _id: generateId(),
+    status: 'Active',
+    createdAt: new Date().toISOString(),
+    ...connectorData
+  };
+  connectors.push(newConnector);
+  exports.saveConnectors(connectors);
+  return newConnector;
 };

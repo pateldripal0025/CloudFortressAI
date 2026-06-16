@@ -11,6 +11,7 @@ const {
 const { globalSearch } = require('../controllers/searchController');
 const { getNotifications, markAsRead, clearAll } = require('../controllers/notificationController');
 const { getComplianceSummary, getComplianceReport } = require('../controllers/complianceController');
+const { getConnectors, createConnector, deleteConnector } = require('../controllers/connectorController');
 const { getDashboardSummary, getAIPriorityInsights, getAnalytics } = require('../controllers/dashboardController');
 const { startScan, getScanHistory } = require('../controllers/scanController');
 const { getAssets } = require('../controllers/resourceController');
@@ -40,6 +41,11 @@ router.get('/assets', protect, getAssets);
 
 // Vulnerabilities
 router.get('/vulnerabilities', protect, getVulnerabilities);
+
+// Cloud Connectors
+router.get('/connectors', protect, getConnectors);
+router.post('/connectors', protect, createConnector);
+router.delete('/connectors/:id', protect, deleteConnector);
 
 // Dashboard endpoints
 router.get('/dashboard/summary', protect, getDashboardSummary);

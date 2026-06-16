@@ -3,7 +3,6 @@ import config from '../config';
 
 const api = axios.create({
   baseURL: `${config.apiUrl}/api`,
-
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -110,7 +109,6 @@ export const dashboardService = {
   getResourceSphereData: () => api.get('/dashboard/resource-sphere'),
 };
 
-
 export const scanService = {
   startScan: (provider) => api.post('/scans/start', { provider }),
   getHistory: () => api.get('/scans/history'),
@@ -133,11 +131,11 @@ export const riskService = {
   deleteRisk: (id) => api.delete(`/risks/${id}`),
   
   exportRisksToCSV: async () => {
-    // We need a fresh axios instance or bypass the interceptor for blob
     const response = await axios.get(`${config.apiUrl}/api/risks/export`, { 
       responseType: 'blob',
       headers: { Authorization: `Bearer ${localStorage.getItem('cf_token')}` }
     });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `risks_export_${new Date().getTime()}.csv`);
@@ -170,9 +168,14 @@ export const riskService = {
   globalSearch: (query) => api.get(`/search?search=${query}`),
 };
 
-
 export const assetService = {
   getAssets: () => api.get('/assets'),
+};
+
+export const connectorService = {
+  getConnectors: () => api.get('/connectors'),
+  createConnector: (data) => api.post('/connectors', data),
+  deleteConnector: (id) => api.delete(`/connectors/${id}`),
 };
 
 export const complianceService = {
