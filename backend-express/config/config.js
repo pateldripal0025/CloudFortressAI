@@ -38,7 +38,7 @@ const config = {
   port: parseInt(process.env.PORT, 10) || 5001,
   
   mongo: {
-    uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/cloudfortress_node'
+    uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/cloudfortress_ai'
   },
   
   jwt: {

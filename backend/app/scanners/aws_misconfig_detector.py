@@ -38,6 +38,25 @@ class AWSMisconfigDetector:
 
         except Exception as e:
             logger.error("aws_detection_error", service="s3", bucket=name, error=str(e))
+            # Fallback to local configuration properties if boto3 fails (essential for simulation/demo environments)
+            config = resource.get("configuration", {})
+            pab_config = config.get("PublicAccessBlockConfiguration", {})
+            if pab_config:
+                if not all([pab_config.get("BlockPublicAcls"), pab_config.get("IgnorePublicAcls"), 
+                           pab_config.get("BlockPublicPolicy"), pab_config.get("RestrictPublicBuckets")]):
+                    risks.append(self._create_risk(resource, "Public S3 Bucket", "Critical", 
+                        "S3 bucket public access block is not fully enabled.", 
+                        "Enable all Public Access Block settings for this bucket."))
+            else:
+                risks.append(self._create_risk(resource, "Public S3 Bucket", "Critical", 
+                    "No Public Access Block configuration found for this bucket.", 
+                    "Enable Public Access Block settings."))
+            
+            # Check encryption in fallback
+            if not config.get("ServerSideEncryptionRule") and not config.get("ServerSideEncryptionConfiguration"):
+                risks.append(self._create_risk(resource, "Unencrypted S3 Bucket", "High", 
+                    "Default encryption is not enabled for this S3 bucket.", 
+                    "Enable AES-256 or KMS encryption for this bucket."))
         return risks
 
     def check_security_group(self, resource: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -77,6 +96,18 @@ class AWSMisconfigDetector:
                         "Avoid using AdministratorAccess for service roles."))
         except Exception as e:
             logger.error("aws_detection_error", service="iam", role=role_name, error=str(e))
+            # Fallback to local configuration properties if boto3 fails
+            config = resource.get("configuration", {})
+            for policy in config.get("Policies", []):
+                if self._has_wildcard_permission(policy.get("PolicyDocument", {})):
+                    risks.append(self._create_risk(resource, "Overly Permissive IAM Policy", "Critical", 
+                        f"Inline policy {policy.get('PolicyName')} contains '*:*' permissions.", 
+                        "Follow the principle of least privilege and specify limited permissions."))
+            for p in config.get("AttachedPolicies", []):
+                if p.get("PolicyName") == "AdministratorAccess":
+                    risks.append(self._create_risk(resource, "Admin IAM Role", "Medium", 
+                        "The role has AdministratorAccess attached.", 
+                        "Avoid using AdministratorAccess for service roles."))
         return risks
 
     def check_rds_public(self, resource: Dict[str, Any]) -> List[Dict[str, Any]]:
