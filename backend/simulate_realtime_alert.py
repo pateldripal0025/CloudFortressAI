@@ -9,8 +9,22 @@ def print_header():
     print()
 
 def simulate_alert(choice: int):
-    url = "http://localhost:8000/api/v1/realtime/event"
-    telemetry_url = "http://localhost:8000/api/v1/realtime/telemetry"
+    print("Select target environment:")
+    print("  [1] Local Development (localhost:8000)")
+    print("  [2] Production (cloudfortressai-production.up.railway.app)")
+    try:
+        env_val = input("Enter environment choice (1-2) [Default 1]: ").strip()
+        env_choice = int(env_val) if env_val else 1
+    except (KeyboardInterrupt, ValueError):
+        env_choice = 1
+
+    if env_choice == 2:
+        base_url = "https://cloudfortressai-production.up.railway.app"
+    else:
+        base_url = "http://localhost:8000"
+
+    url = f"{base_url}/api/v1/realtime/event"
+    telemetry_url = f"{base_url}/api/v1/realtime/telemetry"
     secret = "cf_webhook_secure_token_2026"
     
     headers = {

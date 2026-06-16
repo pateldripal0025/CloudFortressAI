@@ -11,7 +11,7 @@ const getAPIBaseURL = () => {
   
   // Fallback for production if hosted in unified container/server
   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return `${window.location.protocol}//${window.location.host}`;
+    return 'https://cloudfortressai-production.up.railway.app';
   }
   
   // Local development default Node port
